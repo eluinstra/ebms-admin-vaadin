@@ -12,17 +12,6 @@
 			"type": "shell",
 			"command": "MAVEN_OPTS=\"$MAVEN_OPTS -agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=n\" mvn spring-boot:run",
 			"problemMatcher": []
-		},
-		{
-			"label": "java: exportjar:ebms-admin-vaadin",
-			"type": "java",
-			"mainClass": "nl.clockwork.ebms.admin.ebmsadmin.EbmsAdminApplication",
-			"targetPath": "${workspaceFolder}/${workspaceFolderBasename}.jar",
-			"elements": [
-				"${compileOutput}",
-				"${dependencies}"
-			],
-			"problemMatcher": []
 		}
 	]
 }

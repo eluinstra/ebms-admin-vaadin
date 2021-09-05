@@ -14,8 +14,8 @@
       "type": "java",
       "name": "Launch EbmsAdminApplication",
       "request": "launch",
-      "mainClass": "nl.clockwork.ebms.admin.ebmsadmin.EbmsAdminApplication",
-      "projectName": "ebms-admin"
+      "mainClass": "nl.clockwork.ebms.admin.EbmsAdminApplication",
+      "projectName": "ebms-admin-vaadin"
     },
     {
       "type": "java",
