@@ -26,11 +26,11 @@
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
-		<!-- <dependency>
+		<dependency>
 			<groupId>nl.clockwork.ebms</groupId>
 			<artifactId>ebms-core</artifactId>
 			<version>2.18.3-SNAPSHOT</version>
-		</dependency> -->
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
