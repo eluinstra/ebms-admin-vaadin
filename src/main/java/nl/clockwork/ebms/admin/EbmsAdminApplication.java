@@ -1,4 +1,4 @@
-package nl.clockwork.ebms.admin.ebmsadmin;
+package nl.clockwork.ebms.admin;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
