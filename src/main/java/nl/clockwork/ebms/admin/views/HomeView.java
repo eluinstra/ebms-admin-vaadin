@@ -13,6 +13,6 @@ public class HomeView extends Div
 {
 	public HomeView()
 	{
-		add(new Text("Welcome to the EbMS Admin Console"));
+		add(new Text(getTranslation("home.message")));
 	}
 }

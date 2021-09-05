@@ -19,46 +19,46 @@ public class MainLayout extends AppLayout
 	public MainLayout()
 	{
 		val menuBar = new MenuBar();
-		menuBar.addItem(new RouterLink("Home",HomeView.class));
-		createCPAServiceMenu(menuBar.addItem("cpaService"));
-		createMessageServiceMenu(menuBar.addItem("messageService"));
-		createAdvancedMenu(menuBar.addItem("advanced"));
-		menuBar.addItem(new RouterLink("About",AboutView.class));
+		menuBar.addItem(new RouterLink(getTranslation("home"),HomeView.class));
+		createCPAServiceMenu(menuBar.addItem(getTranslation("cpaService")));
+		createMessageServiceMenu(menuBar.addItem(getTranslation("messageService")));
+		createAdvancedMenu(menuBar.addItem(getTranslation("advanced")));
+		menuBar.addItem(new RouterLink(getTranslation("about"),AboutView.class));
 		addToNavbar(menuBar);
 	}
 
 	private void createCPAServiceMenu(MenuItem cpaService)
 	{
 		val subMenu = cpaService.getSubMenu();
-		subMenu.addItem("cpas");
+		subMenu.addItem(getTranslation("cpas"));
 		subMenu.addItem(new Hr());
-		subMenu.addItem("urlMappings");
+		subMenu.addItem(getTranslation("urlMappings"));
 		subMenu.addItem(new Hr());
-		subMenu.addItem("certificateMappings");
+		subMenu.addItem(getTranslation("certificateMappings"));
 	}
 
 	private void createMessageServiceMenu(MenuItem messageService)
 	{
 		val subMenu = messageService.getSubMenu();
-		subMenu.addItem("ping");
+		subMenu.addItem(getTranslation("ping"));
 		subMenu.addItem(new Hr());
-		subMenu.addItem("unprocessedMessages");
+		subMenu.addItem(getTranslation("unprocessedMessages"));
 		subMenu.addItem(new Hr());
-		subMenu.addItem("messageEvents");
+		subMenu.addItem(getTranslation("messageEvents"));
 		subMenu.addItem(new Hr());
-		subMenu.addItem("messageSend");
-		subMenu.addItem("messageResend");
+		subMenu.addItem(getTranslation("messageSend"));
+		subMenu.addItem(getTranslation("messageResend"));
 		subMenu.addItem(new Hr());
-		subMenu.addItem("messageStatus");
+		subMenu.addItem(getTranslation("messageStatus"));
 	}
 
 	private void createAdvancedMenu(MenuItem advanced)
 	{
 		val subMenu = advanced.getSubMenu();
-		subMenu.addItem("traffic");
-		subMenu.addItem("trafficChart");
+		subMenu.addItem(getTranslation("traffic"));
+		subMenu.addItem(getTranslation("trafficChart"));
 		subMenu.addItem(new Hr());
-		subMenu.addItem("cpas");
-		subMenu.addItem("messages");
+		subMenu.addItem(getTranslation("cpas"));
+		subMenu.addItem(getTranslation("messages"));
 	}
 }
