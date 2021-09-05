@@ -3,6 +3,7 @@ package nl.clockwork.ebms.admin.views;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.html.Hr;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.RouterLink;
@@ -18,13 +19,26 @@ public class MainLayout extends AppLayout
 {
 	public MainLayout()
 	{
+		addToNavbar(createImage());
+		addToNavbar(createMenuBar());
+	}
+
+	private Image createImage()
+	{
+		val image = new Image("images/ebms_admin.gif",getTranslation("home"));
+		image.addClickListener(e -> image.getUI().ifPresent(ui -> ui.navigate(HomeView.class)));
+		return image;
+	}
+
+	private MenuBar createMenuBar()
+	{
 		val menuBar = new MenuBar();
 		menuBar.addItem(new RouterLink(getTranslation("home"),HomeView.class));
 		createCPAServiceMenu(menuBar.addItem(getTranslation("cpaService")));
 		createMessageServiceMenu(menuBar.addItem(getTranslation("messageService")));
 		createAdvancedMenu(menuBar.addItem(getTranslation("advanced")));
 		menuBar.addItem(new RouterLink(getTranslation("about"),AboutView.class));
-		addToNavbar(menuBar);
+		return menuBar;
 	}
 
 	private void createCPAServiceMenu(MenuItem cpaService)
