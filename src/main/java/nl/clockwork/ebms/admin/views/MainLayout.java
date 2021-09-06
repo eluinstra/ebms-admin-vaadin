@@ -17,7 +17,7 @@ import com.vaadin.flow.theme.material.Material;
 
 import lombok.val;
 
-@PWA(name = "ebms-admin-vaadin", shortName = "ebms-admin-vaadin", enableInstallPrompt = false)
+@PWA(name = "ebms-admin-vaadin", shortName = "ebms-admin-vaadin", enableInstallPrompt = false, iconPath = "icons/icon.png")
 @Theme(value = Material.class)
 @CssImport("./styles/custom-styles.css")
 @PageTitle("Main")
