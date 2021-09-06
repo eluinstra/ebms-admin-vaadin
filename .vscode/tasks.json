@@ -12,6 +12,11 @@
 			"type": "shell",
 			"command": "MAVEN_OPTS=\"$MAVEN_OPTS -agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=n\" mvn spring-boot:run",
 			"problemMatcher": []
-		}
+		},
+		{
+      "label": "hsqlDbStart",
+      "type": "shell",
+      "command": "java -cp ~/.m2/repository/org/hsqldb/hsqldb/2.5.2/hsqldb-2.5.2.jar org.hsqldb.server.Server --database.0 file:hsqldb/ebms --dbname.0 ebms -port 9001"
+    }
 	]
 }
