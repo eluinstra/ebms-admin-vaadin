@@ -13,17 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.clockwork.ebms.admin;
+package nl.clockwork.ebms.admin.model;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import java.time.Instant;
 
-@SpringBootApplication
-public class EbmsAdminApplication
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.experimental.FieldDefaults;
+
+@Data
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@NoArgsConstructor
+@AllArgsConstructor
+public class DeliveryTask
 {
-	public static void main(String[] args)
-	{
-		SpringApplication.run(EbmsAdminApplication.class, args);
-	}
-
+	@NonNull
+	Instant timeToLive;
+	@NonNull
+	Instant timestamp;
+	int retries;
 }
