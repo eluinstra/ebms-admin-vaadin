@@ -15,13 +15,15 @@
  */
 package nl.clockwork.ebms.admin.views;
 
-import com.vaadin.flow.component.Text;
-import com.vaadin.flow.component.html.Div;
+import com.github.appreciated.card.Card;
+import com.github.appreciated.card.content.Item;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
+import lombok.val;
 import nl.clockwork.ebms.admin.Utils;
 
 @Route(value = "about", layout = MainLayout.class)
@@ -31,7 +33,31 @@ public class AboutView extends VerticalLayout
 	public AboutView()
 	{
 		add(new H1(getTranslation("about")));
-		add(new Div(new Text(Utils.readVersion("/META-INF/maven/nl.clockwork.ebms.admin/ebms-admin/pom.properties"))));
-		add(new Div(new Text(Utils.readVersion("/META-INF/maven/nl.clockwork.ebms/ebms-core/pom.properties"))));
+		add(createVersionsCard());
+		add(createPropertiesCard());
 	}
+
+	private Card createVersionsCard()
+	{
+		val result = new Card(
+			// new TitleLabel("Versions"),
+			new Item("ebms-admin",Utils.readVersion("/META-INF/maven/nl.clockwork.ebms.admin/ebms-admin/pom.properties")),
+			new Item("ebms-core",Utils.readVersion("/META-INF/maven/nl.clockwork.ebms/ebms-core/pom.properties"))
+		);
+		result.setWidthFull();
+		return result;
+	}
+
+	private Component createPropertiesCard()
+	{
+		val properties = new Item("Properties","prop1=val1\nprop2=val2\nprop3=val3");
+		properties.getElement().getStyle().set("white-space","pre-wrap");
+		val result = new Card(
+			// new TitleLabel("Properties"),
+			properties
+		);
+		result.setWidthFull();
+		return result;
+	}
+
 }
