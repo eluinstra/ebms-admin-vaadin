@@ -17,7 +17,7 @@ package nl.clockwork.ebms.admin.views;
 
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -30,8 +30,7 @@ public class AboutView extends VerticalLayout
 {
 	public AboutView()
 	{
-		setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
-		setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.STRETCH);
+		add(new H1(getTranslation("about")));
 		add(new Div(new Text(Utils.readVersion("/META-INF/maven/nl.clockwork.ebms.admin/ebms-admin/pom.properties"))));
 		add(new Div(new Text(Utils.readVersion("/META-INF/maven/nl.clockwork.ebms/ebms-core/pom.properties"))));
 	}

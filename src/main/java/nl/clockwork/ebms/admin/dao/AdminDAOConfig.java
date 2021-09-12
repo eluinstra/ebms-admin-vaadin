@@ -17,15 +17,12 @@ package nl.clockwork.ebms.admin.dao;
 
 import javax.sql.DataSource;
 
+import com.querydsl.sql.SQLQueryFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.transaction.PlatformTransactionManager;
-
-import com.querydsl.sql.SQLQueryFactory;
 
 import lombok.AccessLevel;
 import lombok.val;
@@ -34,13 +31,8 @@ import nl.clockwork.ebms.transaction.TransactionManagerConfig.TransactionManager
 
 @Configuration
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public abstract class AdminDAOConfig
+public class AdminDAOConfig
 {
-	@Value("${transactionManager.type}")
-	TransactionManagerType transactionManagerType;
-	@Autowired
-	@Qualifier("dataSourceTransactionManager")
-	PlatformTransactionManager dataSourceTransactionManager;
 	@Autowired
 	DataSource dataSource;
 	@Autowired
@@ -50,6 +42,6 @@ public abstract class AdminDAOConfig
 	public EbMSDAO ebMSDAO()
 	{
 		val jdbcTemplate = new JdbcTemplate(dataSource);
-		return new EbMSDAOFactory(transactionManagerType,dataSource,jdbcTemplate,queryFactory).getObject();
+		return new EbMSDAOFactory(TransactionManagerType.DEFAULT,dataSource,jdbcTemplate,queryFactory).getObject();
 	}
 }

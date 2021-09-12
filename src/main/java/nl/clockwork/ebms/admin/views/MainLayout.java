@@ -18,7 +18,6 @@ package nl.clockwork.ebms.admin.views;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Hr;
@@ -31,6 +30,7 @@ import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.material.Material;
 
 import lombok.val;
+import nl.clockwork.ebms.admin.views.cpa.CpasView;
 
 @PWA(name = "ebms-admin-vaadin", shortName = "ebms-admin-vaadin", enableInstallPrompt = false, iconPath = "icons/icon.png")
 @Theme(value = Material.class)
@@ -58,7 +58,7 @@ public class MainLayout extends AppLayout
 		menuBar.addItem(createRouterLink(getTranslation("home"),HomeView.class));
 		createCPAServiceMenu(menuBar.addItem(getTranslation("cpaService")));
 		createMessageServiceMenu(menuBar.addItem(getTranslation("messageService")));
-		createAdvancedMenu(menuBar.addItem(new Button(getTranslation("advanced"))));
+		createAdvancedMenu(menuBar.addItem(getTranslation("advanced")));
 		menuBar.addItem(createRouterLink(getTranslation("about"),AboutView.class));
 		return menuBar;
 	}
@@ -101,7 +101,7 @@ public class MainLayout extends AppLayout
 		subMenu.addItem(getTranslation("traffic"));
 		subMenu.addItem(getTranslation("trafficChart"));
 		subMenu.add(new Hr());
-		subMenu.addItem(getTranslation("cpas"));
+		subMenu.addItem(createRouterLink(getTranslation("cpas"),CpasView.class));
 		subMenu.addItem(getTranslation("messages"));
 	}
 }

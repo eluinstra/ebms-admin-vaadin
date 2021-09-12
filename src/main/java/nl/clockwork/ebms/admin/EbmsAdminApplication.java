@@ -17,13 +17,19 @@ package nl.clockwork.ebms.admin;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
-@SpringBootApplication
-public class EbmsAdminApplication
+import nl.clockwork.ebms.admin.dao.AdminDAOConfig;
+import nl.clockwork.ebms.querydsl.model.QueryDSLConfig;
+
+@SpringBootApplication(scanBasePackageClasses = {
+	AdminDAOConfig.class,
+	TranslationProvider.class,
+	QueryDSLConfig.class})
+public class EbmsAdminApplication extends SpringBootServletInitializer
 {
 	public static void main(String[] args)
 	{
-		SpringApplication.run(EbmsAdminApplication.class, args);
+		SpringApplication.run(EbmsAdminApplication.class,args);
 	}
-
 }

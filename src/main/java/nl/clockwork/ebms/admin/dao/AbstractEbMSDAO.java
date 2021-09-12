@@ -63,7 +63,7 @@ import nl.clockwork.ebms.querydsl.model.QEbmsMessage;
 
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 @AllArgsConstructor
-@Transactional(transactionManager = "dataSourceTransactionManager")
+@Transactional//(transactionManager = "dataSourceTransactionManager")
 public abstract class AbstractEbMSDAO implements EbMSDAO
 {
 	@NonNull
