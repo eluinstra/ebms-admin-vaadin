@@ -31,6 +31,7 @@ import com.vaadin.flow.theme.material.Material;
 
 import lombok.val;
 import nl.clockwork.ebms.admin.views.cpa.CpasView;
+import nl.clockwork.ebms.admin.views.message.MessagesView;
 
 @PWA(name = "ebms-admin-vaadin", shortName = "ebms-admin-vaadin", enableInstallPrompt = false, iconPath = "icons/icon.png")
 @Theme(value = Material.class)
@@ -102,6 +103,6 @@ public class MainLayout extends AppLayout
 		subMenu.addItem(getTranslation("trafficChart"));
 		subMenu.add(new Hr());
 		subMenu.addItem(createRouterLink(getTranslation("cpas"),CpasView.class));
-		subMenu.addItem(getTranslation("messages"));
+		subMenu.addItem(createRouterLink(getTranslation("messages"),MessagesView.class));
 	}
 }
