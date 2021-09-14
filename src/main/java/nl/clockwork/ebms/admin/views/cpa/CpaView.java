@@ -30,6 +30,8 @@ import com.vaadin.flow.router.Route;
 
 import lombok.NonNull;
 import lombok.val;
+import nl.clockwork.ebms.admin.components.BackButton;
+import nl.clockwork.ebms.admin.model.CPA;
 import nl.clockwork.ebms.admin.views.MainLayout;
 
 @Route(value = "cpa/:cpaId", layout = MainLayout.class)
@@ -50,10 +52,17 @@ public class CpaView extends VerticalLayout implements BeforeEnterObserver
 		else
 		{
 			val cpa = getEbMSAdminDAO().findCPA(cpaId);
-			val formLayout = new FormLayout();
-			add(formLayout);
-			formLayout.add(createTextArea(getTranslation("lbl.cpa"),cpa.getCpa()));
+			add(createFormLayout(cpa));
+			add(new BackButton(getTranslation("cmd.back")));
 		}
+	}
+
+	private Component createFormLayout(CPA cpa)
+	{
+		val result = new FormLayout();
+		result.setSizeFull();
+		result.add(createTextArea(getTranslation("lbl.cpa"),cpa.getCpa()));
+		return result;
 	}
 
 	private Component createTextArea(@NonNull String label, @NonNull String value)
