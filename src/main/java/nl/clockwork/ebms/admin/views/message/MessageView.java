@@ -20,10 +20,10 @@ import static nl.clockwork.ebms.admin.views.BeanProvider.getEbMSAdminDAO;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
@@ -72,7 +72,7 @@ public class MessageView extends VerticalLayout implements BeforeEnterObserver
 
 	private Component createField(final String label, final String value)
 	{
-		val result = new Div();
+		val result = new HorizontalLayout();
 		result.addClassName("vaadin-text-field-container");
 		result.getElement().setAttribute("colspan","2");
 		result.add(createLabel(label));
