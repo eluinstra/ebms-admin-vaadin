@@ -23,7 +23,6 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
@@ -53,19 +52,8 @@ public class CpaView extends VerticalLayout implements BeforeEnterObserver
 			val cpa = getEbMSAdminDAO().findCPA(cpaId);
 			val formLayout = new FormLayout();
 			add(formLayout);
-			formLayout.add(createTextField(getTranslation("lbl.cpaId"),cpa.getCpaId()));
 			formLayout.add(createTextArea(getTranslation("lbl.cpa"),cpa.getCpa()));
 		}
-	}
-
-	private Component createTextField(@NonNull String label, @NonNull String value)
-	{
-		val result = new TextField();
-		result.getElement().setAttribute("colspan","2");
-		result.setReadOnly(true);
-		result.setLabel(label);
-		result.setValue(value);
-		return result;
 	}
 
 	private Component createTextArea(@NonNull String label, @NonNull String value)
