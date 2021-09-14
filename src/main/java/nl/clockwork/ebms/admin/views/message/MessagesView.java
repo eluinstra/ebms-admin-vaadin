@@ -17,6 +17,10 @@ package nl.clockwork.ebms.admin.views.message;
 
 import static nl.clockwork.ebms.admin.views.BeanProvider.getEbMSAdminDAO;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
@@ -27,9 +31,15 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteParameters;
-import com.vaadin.flow.router.RouterLink;
+import com.vaadin.flow.server.StreamResource;
+
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.cxf.io.CachedOutputStream;
 
 import lombok.val;
+import nl.clockwork.ebms.admin.components.DownloadButton;
+import nl.clockwork.ebms.admin.components.RouterLink;
 import nl.clockwork.ebms.admin.dao.EbMSDAO;
 import nl.clockwork.ebms.admin.model.EbMSMessage;
 import nl.clockwork.ebms.admin.views.MainLayout;
@@ -41,7 +51,9 @@ public class MessagesView extends VerticalLayout
 	public MessagesView()
 	{
 		add(new H1(getTranslation("messages")));
-		add(createMessageGrid(getEbMSAdminDAO()));
+		val ebMSDAO = getEbMSAdminDAO();
+		add(createMessageGrid(ebMSDAO));
+		add(new DownloadButton(getTranslation("cmd.download"),new StreamResource("messages.csv",() -> this.createCsv(ebMSDAO))));
 	}
 
 	private Component createMessageGrid(EbMSDAO ebMSDAO)
@@ -66,17 +78,28 @@ public class MessagesView extends VerticalLayout
 		return result;
 	}
 
-	private RouterLink createRouterLink(EbMSMessage message, Class<? extends Component> component)
-	{
-		val result = new RouterLink(message.getMessageId(),component, new RouteParameters("messageId",message.getMessageId()));
-		result.getElement().getStyle().set("text-decoration","none");
-		return result;
-	}
-
 	private DataProvider<EbMSMessage,?> createMessageDataProvider(EbMSDAO ebMSDAO)
 	{
-		return DataProvider.fromCallbacks(
-			query -> ebMSDAO.selectMessages(null,query.getOffset(),query.getLimit()).stream(),
-			query -> ((Long)ebMSDAO.countMessages(null)).intValue());
+		return DataProvider.fromCallbacks(query -> ebMSDAO.selectMessages(null,query.getOffset(),query.getLimit()).stream(),
+				query -> ((Long)ebMSDAO.countMessages(null)).intValue());
 	}
+
+	private RouterLink createRouterLink(EbMSMessage message, Class<? extends Component> component)
+	{
+		return new RouterLink(message.getMessageId(),component,new RouteParameters("messageId",message.getMessageId()));
+	}
+
+	private InputStream createCsv(EbMSDAO ebMSAdminDAO)
+	{
+		try (val output = new CachedOutputStream(); val printer = new CSVPrinter(new OutputStreamWriter(output),CSVFormat.DEFAULT))
+		{
+			ebMSAdminDAO.printMessagesToCSV(printer,null);
+			return output.getInputStream();
+		}
+		catch (IOException e)
+		{
+			throw new IllegalStateException(e);
+		}
+	}
+
 }

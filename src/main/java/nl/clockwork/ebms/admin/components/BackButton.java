@@ -5,9 +5,9 @@ import com.vaadin.flow.component.button.Button;
 
 public class BackButton extends Button
 {
-	public BackButton(String label)
+	public BackButton(String text)
 	{
-		setText(label);
+		setText(text);
 		addClickListener(e -> UI.getCurrent().getElement().executeJs("window.history.back()"));
 	}
 }

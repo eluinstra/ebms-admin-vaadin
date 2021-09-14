@@ -15,7 +15,6 @@
  */
 package nl.clockwork.ebms.admin.views;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.contextmenu.MenuItem;
@@ -24,12 +23,12 @@ import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.material.Material;
 
 import lombok.val;
+import nl.clockwork.ebms.admin.components.RouterLink;
 import nl.clockwork.ebms.admin.views.cpa.CpasView;
 import nl.clockwork.ebms.admin.views.message.MessagesView;
 
@@ -56,19 +55,12 @@ public class MainLayout extends AppLayout
 	{
 		val menuBar = new MenuBar();
 		menuBar.setOpenOnHover(true);
-		menuBar.addItem(createRouterLink(getTranslation("home"),HomeView.class));
+		menuBar.addItem(new RouterLink(getTranslation("home"),HomeView.class));
 		createCPAServiceMenu(menuBar.addItem(getTranslation("cpaService")));
 		createMessageServiceMenu(menuBar.addItem(getTranslation("messageService")));
 		createAdvancedMenu(menuBar.addItem(getTranslation("advanced")));
-		menuBar.addItem(createRouterLink(getTranslation("about"),AboutView.class));
+		menuBar.addItem(new RouterLink(getTranslation("about"),AboutView.class));
 		return menuBar;
-	}
-
-	private RouterLink createRouterLink(String text, Class<? extends Component> component)
-	{
-		val result = new RouterLink(text,component);
-		result.getElement().getStyle().set("text-decoration","none");
-		return result;
 	}
 
 	private void createCPAServiceMenu(MenuItem cpaService)
@@ -102,7 +94,7 @@ public class MainLayout extends AppLayout
 		subMenu.addItem(getTranslation("traffic"));
 		subMenu.addItem(getTranslation("trafficChart"));
 		subMenu.add(new Hr());
-		subMenu.addItem(createRouterLink(getTranslation("cpas"),CpasView.class));
-		subMenu.addItem(createRouterLink(getTranslation("messages"),MessagesView.class));
+		subMenu.addItem(new RouterLink(getTranslation("cpas"),CpasView.class));
+		subMenu.addItem(new RouterLink(getTranslation("messages"),MessagesView.class));
 	}
 }

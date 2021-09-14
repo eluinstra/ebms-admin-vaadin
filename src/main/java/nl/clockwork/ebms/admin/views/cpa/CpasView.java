@@ -18,7 +18,6 @@ package nl.clockwork.ebms.admin.views.cpa;
 import static nl.clockwork.ebms.admin.views.BeanProvider.getEbMSAdminDAO;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.html.H1;
@@ -28,9 +27,9 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteParameters;
-import com.vaadin.flow.router.RouterLink;
 
 import lombok.val;
+import nl.clockwork.ebms.admin.components.RouterLink;
 import nl.clockwork.ebms.admin.dao.EbMSDAO;
 import nl.clockwork.ebms.admin.model.CPA;
 import nl.clockwork.ebms.admin.views.MainLayout;
@@ -58,9 +57,7 @@ public class CpasView extends VerticalLayout
 
 	private RouterLink createRouterLink(CPA cpa, Class<? extends Component> component)
 	{
-		val result = new RouterLink(cpa.getCpaId(),component, new RouteParameters("cpaId",cpa.getCpaId()));
-		result.getElement().getStyle().set("text-decoration","none");
-		return result;
+		return new RouterLink(cpa.getCpaId(),component, new RouteParameters("cpaId",cpa.getCpaId()));
 	}
 
 	private DataProvider<CPA,?> createCpaDataProvider(EbMSDAO ebMSDAO)
