@@ -15,7 +15,6 @@
  */
 package nl.clockwork.ebms.admin.views;
 
-import com.vaadin.flow.component.HtmlComponent;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.accordion.AccordionPanel;
 import com.vaadin.flow.component.html.Div;
@@ -28,6 +27,7 @@ import com.vaadin.flow.router.Route;
 
 import lombok.val;
 import nl.clockwork.ebms.admin.Utils;
+import nl.clockwork.ebms.admin.components.Br;
 
 @Route(value = "about", layout = MainLayout.class)
 @PageTitle("About")
@@ -48,7 +48,7 @@ public class AboutView extends VerticalLayout
 	{
 		val properties = new Div();
 		properties.add(new Span(Utils.readVersion("/META-INF/maven/nl.clockwork.ebms.admin/ebms-admin/pom.properties")));
-		properties.add(new HtmlComponent("br"));
+		properties.add(new Br());
 		properties.add(new Span(Utils.readVersion("/META-INF/maven/nl.clockwork.ebms/ebms-core/pom.properties")));
 		return new AccordionPanel(getTranslation("versions"),properties);
 	}
