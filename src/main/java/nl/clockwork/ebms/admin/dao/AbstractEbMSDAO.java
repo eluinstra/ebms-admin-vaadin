@@ -139,7 +139,7 @@ public abstract class AbstractEbMSDAO implements EbMSDAO
 		result.setAttachments(getAttachments(messageId,messageNr));
 		result.setDeliveryTask(getDeliveryTask(messageId));
 		result.setDeliveryLogs(getDeliveryLogs(messageId));
-		result.getAttachments().forEach(a -> a.setMessage(result));
+		// result.getAttachments().forEach(a -> a.setMessage(result));
 		return result;
 	}
 

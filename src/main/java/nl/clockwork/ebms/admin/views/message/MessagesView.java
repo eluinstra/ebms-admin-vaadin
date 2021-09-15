@@ -20,14 +20,19 @@ import static nl.clockwork.ebms.admin.views.BeanProvider.getEbMSAdminDAO;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.LocalDateTimeRenderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteParameters;
@@ -50,38 +55,46 @@ public class MessagesView extends VerticalLayout
 {
 	public MessagesView()
 	{
+		setSizeFull();
 		add(new H1(getTranslation("messages")));
 		val ebMSDAO = getEbMSAdminDAO();
-		add(createMessageGrid(ebMSDAO));
-		add(new DownloadButton(getTranslation("cmd.download"),new StreamResource("messages.csv",() -> this.createCsv(ebMSDAO))));
-	}
-
-	private Component createMessageGrid(EbMSDAO ebMSDAO)
-	{
-		val result = new Grid<EbMSMessage>(EbMSMessage.class,false);
-		result.setDataProvider(createMessageDataProvider(ebMSDAO));
-		result.setSelectionMode(SelectionMode.NONE);
-		result.addColumn(new ComponentRenderer<>(message -> createRouterLink(message,MessageView.class))).setHeader(getTranslation("lbl.messageId"));
-		result.addColumn("messageNr").setHeader(getTranslation("lbl.messageNr"));
-		result.addColumn("conversationId").setHeader(getTranslation("lbl.conversationId"));
-		result.addColumn("refToMessageId").setHeader(getTranslation("lbl.refToMessageId"));
-		result.addColumn("timestamp").setHeader(getTranslation("lbl.timestamp"));
-		result.addColumn("cpaId").setHeader(getTranslation("lbl.cpaId"));
-		result.addColumn("fromPartyId").setHeader(getTranslation("lbl.fromPartyId"));
-		result.addColumn("fromRole").setHeader(getTranslation("lbl.fromRole"));
-		result.addColumn("toPartyId").setHeader(getTranslation("lbl.toPartyId"));
-		result.addColumn("toRole").setHeader(getTranslation("lbl.toRole"));
-		result.addColumn("service").setHeader(getTranslation("lbl.service"));
-		result.addColumn("action").setHeader(getTranslation("lbl.action"));
-		result.addColumn("status").setHeader(getTranslation("lbl.status"));
-		result.addColumn("statusTime").setHeader(getTranslation("lbl.statusTime"));
-		return result;
+		add(createMessageGrid(createMessageDataProvider(ebMSDAO)));
+		add(new DownloadButton(getTranslation("cmd.download"),new StreamResource("messages.csv",() -> createCsv(ebMSDAO))));
 	}
 
 	private DataProvider<EbMSMessage,?> createMessageDataProvider(EbMSDAO ebMSDAO)
 	{
 		return DataProvider.fromCallbacks(query -> ebMSDAO.selectMessages(null,query.getOffset(),query.getLimit()).stream(),
 				query -> ((Long)ebMSDAO.countMessages(null)).intValue());
+	}
+
+	private Component createMessageGrid(DataProvider<EbMSMessage,?> dataProvider)
+	{
+		val result = new Grid<EbMSMessage>(EbMSMessage.class,false);
+		result.setDataProvider(dataProvider);
+		result.setSelectionMode(SelectionMode.NONE);
+		result.addColumn(new ComponentRenderer<>(message -> createRouterLink(message,MessageView.class)))
+				.setHeader(getTranslation("lbl.messageId"))
+				.setAutoWidth(true)
+				.setFrozen(true);
+		result.addColumn("messageNr").setHeader(getTranslation("lbl.messageNr")).setAutoWidth(true).setTextAlign(ColumnTextAlign.END);
+		result.addColumn("conversationId").setHeader(getTranslation("lbl.conversationId")).setAutoWidth(true);
+		result.addColumn("refToMessageId").setHeader(getTranslation("lbl.refToMessageId")).setAutoWidth(true);
+		result.addColumn(new LocalDateTimeRenderer<>(m -> LocalDateTime.ofInstant(m.getTimestamp(),ZoneId.systemDefault()),DateTimeFormatter.ISO_DATE_TIME))
+				.setHeader(getTranslation("lbl.timestamp"))
+				.setAutoWidth(true);
+		result.addColumn("cpaId").setHeader(getTranslation("lbl.cpaId")).setAutoWidth(true);
+		result.addColumn("fromPartyId").setHeader(getTranslation("lbl.fromPartyId")).setAutoWidth(true);
+		result.addColumn("fromRole").setHeader(getTranslation("lbl.fromRole")).setAutoWidth(true);
+		result.addColumn("toPartyId").setHeader(getTranslation("lbl.toPartyId")).setAutoWidth(true);
+		result.addColumn("toRole").setHeader(getTranslation("lbl.toRole")).setAutoWidth(true);
+		result.addColumn("service").setHeader(getTranslation("lbl.service")).setAutoWidth(true);
+		result.addColumn("action").setHeader(getTranslation("lbl.action")).setAutoWidth(true);
+		result.addColumn("status").setHeader(getTranslation("lbl.status")).setAutoWidth(true);
+		result.addColumn(new LocalDateTimeRenderer<>(m -> m.getStatusTime() == null ? null : LocalDateTime.ofInstant(m.getStatusTime(),ZoneId.systemDefault()),DateTimeFormatter.ISO_DATE_TIME))
+				.setHeader(getTranslation("lbl.statusTime"))
+				.setAutoWidth(true);
+		return result;
 	}
 
 	private RouterLink createRouterLink(EbMSMessage message, Class<? extends Component> component)

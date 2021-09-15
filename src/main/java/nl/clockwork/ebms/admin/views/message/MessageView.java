@@ -17,9 +17,14 @@ package nl.clockwork.ebms.admin.views.message;
 
 import static nl.clockwork.ebms.admin.views.BeanProvider.getEbMSAdminDAO;
 
+import java.time.Instant;
+import java.util.Arrays;
+import java.util.List;
+
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
@@ -32,8 +37,12 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
+import lombok.NonNull;
 import lombok.val;
 import nl.clockwork.ebms.admin.components.BackButton;
+import nl.clockwork.ebms.admin.model.DeliveryLog;
+import nl.clockwork.ebms.admin.model.DeliveryTask;
+import nl.clockwork.ebms.admin.model.EbMSAttachment;
 import nl.clockwork.ebms.admin.model.EbMSMessage;
 import nl.clockwork.ebms.admin.views.MainLayout;
 
@@ -67,13 +76,28 @@ public class MessageView extends VerticalLayout implements BeforeEnterObserver
 		result.add(createField(getTranslation("lbl.messageId"),message.getMessageId()));
 		result.add(createField(getTranslation("lbl.messageNr"),String.valueOf(message.getMessageNr())));
 		result.add(createField(getTranslation("lbl.conversationId"),message.getConversationId()));
+		result.add(createField(getTranslation("lbl.refToMessageId"),message.getRefToMessageId()));
+		result.add(createField(getTranslation("lbl.timestamp"),toString(message.getTimestamp())));
+		result.add(createField(getTranslation("lbl.cpaId"),message.getCpaId()));
+		result.add(createField(getTranslation("lbl.fromPartyId"),message.getFromPartyId()));
+		result.add(createField(getTranslation("lbl.fromRole"),message.getFromRole()));
+		result.add(createField(getTranslation("lbl.toPartyId"),message.getToPartyId()));
+		result.add(createField(getTranslation("lbl.toRole"),message.getToRole()));
+		result.add(createField(getTranslation("lbl.service"),message.getService()));
+		result.add(createField(getTranslation("lbl.action"),message.getAction()));
+		//viewMessageError
+		result.add(createField(getTranslation("lbl.status"),message.getStatus().name()));
+		result.add(createField(getTranslation("lbl.statusTime"),toString(message.getStatusTime())));
+		if (message.getDeliveryTask() != null)
+			result.add(createDeliveryTask(message.getDeliveryTask()));
+		result.add(createDeliveryLogs(message.getDeliveryLogs()));
+		result.add(createAttachments(message.getAttachments()));
 		return result;
 	}
 
 	private Component createField(final String label, final String value)
 	{
 		val result = new HorizontalLayout();
-		result.addClassName("vaadin-text-field-container");
 		result.getElement().setAttribute("colspan","2");
 		result.add(createLabel(label));
 		result.add(new Span(value));
@@ -84,6 +108,72 @@ public class MessageView extends VerticalLayout implements BeforeEnterObserver
 	{
 		val result = new Label(label);
 		result.getElement().getStyle().set("font-weight","bold");
+		return result;
+	}
+
+	private String toString(Instant dateTime)
+	{
+		return dateTime == null ? null : dateTime.toString();
+	}
+
+	private Component createDeliveryTask(@NonNull DeliveryTask deliveryTask)
+	{
+		val result = new VerticalLayout();
+		result.add(createLabel(getTranslation("lbl.deliveryTasks")));
+		result.add(createDeliveryTaskTable(Arrays.asList(deliveryTask)));
+		return result;
+	}
+
+	private Component createDeliveryTaskTable(@NonNull List<DeliveryTask> deliveryTasks)
+	{
+		val result = new Grid<DeliveryTask>(DeliveryTask.class,false);
+		result.setHeightByRows(true);
+		result.setItems(deliveryTasks);
+		result.addColumn("timeToLive").setHeader(getTranslation("lbl.timeToLive"));
+		result.addColumn("timestamp").setHeader(getTranslation("lbl.timestamp"));
+		result.addColumn("retries").setHeader(getTranslation("lbl.retries"));
+		return result;
+	}
+
+	private Component createDeliveryLogs(@NonNull List<DeliveryLog> deliveryLogs)
+	{
+		val result = new VerticalLayout();
+		result.getElement().setAttribute("colspan","2");
+		result.add(createLabel(getTranslation("lbl.deliveryLog")));
+		result.add(createDeliveryLogTable(deliveryLogs));
+		return result;
+	}
+
+	private Component createDeliveryLogTable(@NonNull List<DeliveryLog> deliveryLogs)
+	{
+		val result = new Grid<DeliveryLog>(DeliveryLog.class,false);
+		result.setHeightByRows(true);
+		result.setItems(deliveryLogs);
+		result.addColumn("timestamp").setHeader(getTranslation("lbl.timestamp"));
+		result.addColumn("uri").setHeader(getTranslation("lbl.uri"));
+		result.addColumn("status").setHeader(getTranslation("lbl.status"));
+		//result.addColumn("errorMessage");
+		return result;
+	}
+
+	private Component createAttachments(@NonNull List<EbMSAttachment> attachments)
+	{
+		val result = new VerticalLayout();
+		result.getElement().setAttribute("colspan","2");
+		result.add(createLabel(getTranslation("lbl.attachments")));
+		result.add(createAttachmentsTable(attachments));
+		return result;
+	}
+
+	private Component createAttachmentsTable(@NonNull List<EbMSAttachment> attachments)
+	{
+		val result = new Grid<EbMSAttachment>(EbMSAttachment.class,false);
+		result.setHeightByRows(true);
+		result.setItems(attachments);
+		result.addColumn("name").setHeader(getTranslation("lbl.name"));
+		result.addColumn("contentId").setHeader(getTranslation("lbl.contentId"));
+		result.addColumn("contentType").setHeader(getTranslation("lbl.contentType"));
+		// result.addColumn("content");
 		return result;
 	}
 

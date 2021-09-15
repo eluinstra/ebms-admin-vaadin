@@ -30,9 +30,9 @@ import lombok.experimental.NonFinal;
 @AllArgsConstructor
 public class EbMSAttachment
 {
-	@NonFinal
-	@Setter
-	EbMSMessage message;
+	// @NonFinal
+	// @Setter
+	// EbMSMessage message;
 	String name;
 	@NonNull
 	String contentId;
@@ -42,11 +42,11 @@ public class EbMSAttachment
 
 	public EbMSAttachment(String name, @NonNull String contentId, @NonNull String contentType)
 	{
-		this(null,name,contentId,contentType,null);
+		this(name,contentId,contentType,null);
 	}
 
-	public EbMSAttachment(String name, @NonNull String contentId, @NonNull String contentType, CachedOutputStream content)
-	{
-		this(null,name,contentId,contentType,content);
-	}
+	// public EbMSAttachment(String name, @NonNull String contentId, @NonNull String contentType, CachedOutputStream content)
+	// {
+	// 	this(name,contentId,contentType,content);
+	// }
 }
