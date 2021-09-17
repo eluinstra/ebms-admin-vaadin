@@ -24,7 +24,10 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
+import javax.xml.bind.JAXBException;
+
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
@@ -45,27 +48,31 @@ import org.apache.cxf.io.CachedOutputStream;
 import lombok.val;
 import nl.clockwork.ebms.admin.components.DownloadButton;
 import nl.clockwork.ebms.admin.components.RouterLink;
+import nl.clockwork.ebms.admin.components.WithBinder;
+import nl.clockwork.ebms.admin.components.WithElement;
 import nl.clockwork.ebms.admin.dao.EbMSDAO;
 import nl.clockwork.ebms.admin.model.EbMSMessage;
 import nl.clockwork.ebms.admin.views.MainLayout;
 
 @Route(value = "message", layout = MainLayout.class)
 @PageTitle("Messages")
-public class MessagesView extends VerticalLayout
+public class MessagesView extends VerticalLayout implements WithElement, WithBinder
 {
-	public MessagesView()
+
+	public MessagesView() throws JAXBException
 	{
 		setSizeFull();
 		add(new H1(getTranslation("messages")));
 		val ebMSDAO = getEbMSAdminDAO();
-		add(createMessageGrid(createMessageDataProvider(ebMSDAO)));
+		val messageFilter = EbMSMessageFilter.ebMSMessageFilterBuilder().build();
+		add(new Details(getTranslation("messageFilter"),new SearchFilter(ebMSDAO,messageFilter)));
+		add(createMessageGrid(createMessageDataProvider(ebMSDAO,messageFilter)));
 		add(new DownloadButton(getTranslation("cmd.download"),new StreamResource("messages.csv",() -> createCsv(ebMSDAO))));
 	}
 
-	private DataProvider<EbMSMessage,?> createMessageDataProvider(EbMSDAO ebMSDAO)
+	private DataProvider<EbMSMessage,?> createMessageDataProvider(EbMSDAO ebMSDAO, EbMSMessageFilter messageFilter)
 	{
-		return DataProvider.fromCallbacks(query -> ebMSDAO.selectMessages(null,query.getOffset(),query.getLimit()).stream(),
-				query -> ((Long)ebMSDAO.countMessages(null)).intValue());
+		return DataProvider.fromCallbacks(query -> ebMSDAO.selectMessages(messageFilter,query.getOffset(),query.getLimit()).stream(),query -> ((Long)ebMSDAO.countMessages(messageFilter)).intValue());
 	}
 
 	private Component createMessageGrid(DataProvider<EbMSMessage,?> dataProvider)
@@ -73,16 +80,11 @@ public class MessagesView extends VerticalLayout
 		val result = new Grid<EbMSMessage>(EbMSMessage.class,false);
 		result.setDataProvider(dataProvider);
 		result.setSelectionMode(SelectionMode.NONE);
-		result.addColumn(new ComponentRenderer<>(message -> createRouterLink(message,MessageView.class)))
-				.setHeader(getTranslation("lbl.messageId"))
-				.setAutoWidth(true)
-				.setFrozen(true);
+		result.addColumn(new ComponentRenderer<>(message -> createRouterLink(message,MessageView.class))).setHeader(getTranslation("lbl.messageId")).setAutoWidth(true).setFrozen(true);
 		result.addColumn("messageNr").setHeader(getTranslation("lbl.messageNr")).setAutoWidth(true).setTextAlign(ColumnTextAlign.END);
 		result.addColumn("conversationId").setHeader(getTranslation("lbl.conversationId")).setAutoWidth(true);
 		result.addColumn("refToMessageId").setHeader(getTranslation("lbl.refToMessageId")).setAutoWidth(true);
-		result.addColumn(new LocalDateTimeRenderer<>(m -> LocalDateTime.ofInstant(m.getTimestamp(),ZoneId.systemDefault()),DateTimeFormatter.ISO_DATE_TIME))
-				.setHeader(getTranslation("lbl.timestamp"))
-				.setAutoWidth(true);
+		result.addColumn(new LocalDateTimeRenderer<>(m -> LocalDateTime.ofInstant(m.getTimestamp(),ZoneId.systemDefault()),DateTimeFormatter.ISO_DATE_TIME)).setHeader(getTranslation("lbl.timestamp")).setAutoWidth(true);
 		result.addColumn("cpaId").setHeader(getTranslation("lbl.cpaId")).setAutoWidth(true);
 		result.addColumn("fromPartyId").setHeader(getTranslation("lbl.fromPartyId")).setAutoWidth(true);
 		result.addColumn("fromRole").setHeader(getTranslation("lbl.fromRole")).setAutoWidth(true);

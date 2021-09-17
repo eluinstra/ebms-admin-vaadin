@@ -31,12 +31,13 @@ import com.vaadin.flow.router.Route;
 import lombok.NonNull;
 import lombok.val;
 import nl.clockwork.ebms.admin.components.BackButton;
+import nl.clockwork.ebms.admin.components.WithElement;
 import nl.clockwork.ebms.admin.model.CPA;
 import nl.clockwork.ebms.admin.views.MainLayout;
 
 @Route(value = "cpa/:cpaId", layout = MainLayout.class)
 @PageTitle("CPA")
-public class CpaView extends VerticalLayout implements BeforeEnterObserver
+public class CpaView extends VerticalLayout implements BeforeEnterObserver, WithElement
 {
 	public CpaView()
 	{
@@ -68,7 +69,7 @@ public class CpaView extends VerticalLayout implements BeforeEnterObserver
 	private Component createTextArea(@NonNull String label, @NonNull String value)
 	{
 		val result = new TextArea();
-		result.getElement().setAttribute("colspan","2");
+		setColSpan(result,2);//
 		// result.getElement().setAttribute("rows","40");
 		result.setHeight("600px");
 		result.setReadOnly(true);

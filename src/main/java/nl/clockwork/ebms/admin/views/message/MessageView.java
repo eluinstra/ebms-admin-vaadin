@@ -40,6 +40,7 @@ import com.vaadin.flow.router.Route;
 import lombok.NonNull;
 import lombok.val;
 import nl.clockwork.ebms.admin.components.BackButton;
+import nl.clockwork.ebms.admin.components.WithElement;
 import nl.clockwork.ebms.admin.model.DeliveryLog;
 import nl.clockwork.ebms.admin.model.DeliveryTask;
 import nl.clockwork.ebms.admin.model.EbMSAttachment;
@@ -48,7 +49,7 @@ import nl.clockwork.ebms.admin.views.MainLayout;
 
 @Route(value = "message/:messageId", layout = MainLayout.class)
 @PageTitle("Message")
-public class MessageView extends VerticalLayout implements BeforeEnterObserver
+public class MessageView extends VerticalLayout implements BeforeEnterObserver, WithElement
 {
 	public MessageView()
 	{
@@ -98,7 +99,7 @@ public class MessageView extends VerticalLayout implements BeforeEnterObserver
 	private Component createField(final String label, final String value)
 	{
 		val result = new HorizontalLayout();
-		result.getElement().setAttribute("colspan","2");
+		setColSpan(result,2);//
 		result.add(createLabel(label));
 		result.add(new Span(value));
 		return result;
@@ -138,7 +139,7 @@ public class MessageView extends VerticalLayout implements BeforeEnterObserver
 	private Component createDeliveryLogs(@NonNull List<DeliveryLog> deliveryLogs)
 	{
 		val result = new VerticalLayout();
-		result.getElement().setAttribute("colspan","2");
+		setColSpan(result,2);//
 		result.add(createLabel(getTranslation("lbl.deliveryLog")));
 		result.add(createDeliveryLogTable(deliveryLogs));
 		return result;
@@ -159,7 +160,7 @@ public class MessageView extends VerticalLayout implements BeforeEnterObserver
 	private Component createAttachments(@NonNull List<EbMSAttachment> attachments)
 	{
 		val result = new VerticalLayout();
-		result.getElement().setAttribute("colspan","2");
+		setColSpan(result,2);//
 		result.add(createLabel(getTranslation("lbl.attachments")));
 		result.add(createAttachmentsTable(attachments));
 		return result;
@@ -180,7 +181,7 @@ public class MessageView extends VerticalLayout implements BeforeEnterObserver
 	private TextField createTextField(final String label, final String value)
 	{
 		val result = new TextField();
-		result.getElement().setAttribute("colspan","2");
+		setColSpan(result,2);//
 		result.setReadOnly(true);
 		result.setLabel(label);
 		result.setValue(value);
@@ -190,7 +191,7 @@ public class MessageView extends VerticalLayout implements BeforeEnterObserver
 	private IntegerField createIntegerField(final String label, final Integer value)
 	{
 		val result = new IntegerField();
-		result.getElement().setAttribute("colspan","2");
+		setColSpan(result,2);//
 		result.setReadOnly(true);
 		result.setLabel(label);
 		result.setValue(value);
