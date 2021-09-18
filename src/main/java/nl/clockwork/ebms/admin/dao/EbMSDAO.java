@@ -23,6 +23,7 @@ import java.util.zip.ZipOutputStream;
 import org.apache.commons.csv.CSVPrinter;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.StringPath;
 
 import nl.clockwork.ebms.EbMSMessageStatus;
 import nl.clockwork.ebms.admin.model.CPA;
@@ -31,51 +32,48 @@ import nl.clockwork.ebms.admin.model.EbMSMessage;
 import nl.clockwork.ebms.admin.views.message.EbMSMessageFilter;
 import nl.clockwork.ebms.admin.views.message.TimeUnit;
 import nl.clockwork.ebms.querydsl.model.QEbmsMessage;
+import nl.clockwork.ebms.service.model.Party;
 
 public interface EbMSDAO
 {
 	CPA findCPA(String cpaId);
+
 	long countCPAs();
+
 	List<String> selectCPAIds();
+
 	List<CPA> selectCPAs(long first, long count);
 
 	EbMSMessage findMessage(String messageId);
+
 	EbMSMessage findMessage(String messageId, int messageNr);
+
 	boolean existsResponseMessage(String messageId);
+
 	EbMSMessage findResponseMessage(String messageId);
+
 	long countMessages(EbMSMessageFilter filter);
+
 	List<EbMSMessage> selectMessages(EbMSMessageFilter filter, long first, long count);
 
 	EbMSAttachment findAttachment(String messageId, int messageNr, String contentId);
-	
+
 	List<String> selectMessageIds(String cpaId, String fromRole, String toRole, EbMSMessageStatus...status);
 
 	Map<Integer,Integer> selectMessageTraffic(LocalDateTime from, LocalDateTime to, TimeUnit timeUnit, EbMSMessageStatus...status);
-	
+
 	void writeMessageToZip(String messageId, int messageNr, ZipOutputStream stream);
+
 	void printMessagesToCSV(CSVPrinter printer, EbMSMessageFilter filter);
 
-
-	static BooleanBuilder applyFilter(QEbmsMessage table, EbMSMessageFilter messageContext, BooleanBuilder builder)
+	default BooleanBuilder applyFilter(QEbmsMessage table, EbMSMessageFilter messageContext, BooleanBuilder builder)
 	{
 		if (messageContext != null)
 		{
 			if (messageContext.getCpaId() != null)
 				builder.and(table.cpaId.eq(messageContext.getCpaId()));
-			if (messageContext.getFromParty() != null)
-			{
-				if (messageContext.getFromParty().getPartyId() != null)
-					builder.and(table.fromPartyId.eq(messageContext.getFromParty().getPartyId()));
-				if (messageContext.getFromParty().getRole() != null)
-					builder.and(table.fromRole.eq(messageContext.getFromParty().getRole()));
-			}
-			if (messageContext.getToParty() != null)
-			{
-				if (messageContext.getToParty().getPartyId() != null)
-					builder.and(table.toPartyId.eq(messageContext.getToParty().getPartyId()));
-				if (messageContext.getToParty().getRole() != null)
-					builder.and(table.toRole.eq(messageContext.getToParty().getRole()));
-			}
+			applyPathFilter(table.fromPartyId,table.fromRole,messageContext.getFromParty(),builder);
+			applyPathFilter(table.toPartyId,table.toRole,messageContext.getToParty(),builder);
 			if (messageContext.getService() != null)
 				builder.and(table.service.eq(messageContext.getService()));
 			if (messageContext.getAction() != null)
@@ -86,9 +84,19 @@ public interface EbMSDAO
 				builder.and(table.messageId.eq(messageContext.getMessageId()));
 			if (messageContext.getRefToMessageId() != null)
 				builder.and(table.refToMessageId.eq(messageContext.getRefToMessageId()));
-			if (messageContext.getStatuses() != null)
+			if (messageContext.getStatuses() != null && !messageContext.getStatuses().isEmpty())
 				builder.and(table.status.in(messageContext.getStatuses()));
 		}
 		return builder;
+	}
+
+	default void applyPathFilter(StringPath partyId, StringPath role, Party party, BooleanBuilder builder)
+	{
+		if (party != null)
+		{
+			builder.and(partyId.eq(party.getPartyId()));
+			if (party.getRole() != null)
+				builder.and(role.eq(party.getRole()));
+		}
 	}
 }
