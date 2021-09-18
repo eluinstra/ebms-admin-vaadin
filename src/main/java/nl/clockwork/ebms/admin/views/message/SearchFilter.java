@@ -8,7 +8,9 @@ import javax.xml.bind.JAXBException;
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.HasValue.ValueChangeListener;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.listbox.MultiSelectListBox;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 
@@ -16,60 +18,57 @@ import org.oasis_open.committees.ebxml_cppa.schema.cpp_cpa_2_0.CollaborationProt
 
 import lombok.val;
 import lombok.extern.slf4j.Slf4j;
+import nl.clockwork.ebms.EbMSMessageStatus;
 import nl.clockwork.ebms.admin.CPAUtils;
 import nl.clockwork.ebms.admin.components.PartySelect;
 import nl.clockwork.ebms.admin.components.WithBinder;
 import nl.clockwork.ebms.admin.components.WithElement;
-import nl.clockwork.ebms.admin.dao.EbMSDAO;
-import nl.clockwork.ebms.admin.views.BeanProvider;
+import nl.clockwork.ebms.admin.views.WithBean;
 import nl.clockwork.ebms.jaxb.JAXBParser;
-import nl.clockwork.ebms.service.model.MessageFilter;
 import nl.clockwork.ebms.service.model.Party;
 
 @Slf4j
-public class SearchFilter extends HorizontalLayout implements WithBinder, WithElement
+public class SearchFilter extends HorizontalLayout implements WithBean, WithBinder, WithElement
 {
 	public SearchFilter(EbMSMessageFilter messageFilter)
 	{
-		this(BeanProvider.getEbMSAdminDAO(),messageFilter);
-	}
-
-	public SearchFilter(EbMSDAO ebMSDAO, EbMSMessageFilter messageFilter)
-	{
-		val binder = createBinder(MessageFilter.class);
-		binder.setBean(messageFilter);
-		val cpaSelect = createComboBox(getTranslation("lbl.cpaId"),ebMSDAO.selectCPAIds());
-		setColSpan(cpaSelect,2);
-		val fromPartySelect = new PartySelect(getTranslation("lbl.fromPartyId"),getTranslation("lbl.fromRole"));
-		setColSpan(fromPartySelect,2);
-		val toPartySelect = new PartySelect(getTranslation("lbl.toPartyId"),getTranslation("lbl.toRole"));
-		setColSpan(toPartySelect,2);
-		val serviceSelect = createComboBox(getTranslation("lbl.service"),Collections.emptyList());
-		val actionSelect = createComboBox(getTranslation("lbl.action"),Collections.emptyList());
-		val conversationId = createTextField(getTranslation("lbl.conversationId"));
-		setColSpan(conversationId,2);
-		val messageId = createTextField(getTranslation("lbl.messageId"));
-		val refToMessageId = createTextField(getTranslation("lbl.refToMessageId"));
-		cpaSelect.addValueChangeListener(cpaSelectChangeListener(ebMSDAO,cpaSelect,fromPartySelect,toPartySelect));
-		fromPartySelect.addValueChangeListener(partySelectChangeListener(ebMSDAO,cpaSelect,fromPartySelect,toPartySelect,serviceSelect));
-		toPartySelect.addValueChangeListener(partySelectChangeListener(ebMSDAO,cpaSelect,toPartySelect,fromPartySelect,serviceSelect));
-		serviceSelect.addValueChangeListener(serviceSelectChangeListener(ebMSDAO,messageFilter,actionSelect));
+		val binder = createBinder(EbMSMessageFilter.class,messageFilter);
+		val cpa = createComboBox(getTranslation("lbl.cpaId"),getEbMSAdminDAO().selectCPAIds(),2);
+		val fromParty = new PartySelect(getTranslation("lbl.fromPartyId"),getTranslation("lbl.fromRole"),2);
+		val toParty = new PartySelect(getTranslation("lbl.toPartyId"),getTranslation("lbl.toRole"),2);
+		val service = createComboBox(getTranslation("lbl.service"),Collections.emptyList(),1);
+		val action = createComboBox(getTranslation("lbl.action"),Collections.emptyList(),1);
+		val conversationId = createTextField(getTranslation("lbl.conversationId"),1);
+		val messageId = createTextField(getTranslation("lbl.messageId"),1);
+		val refToMessageId = createTextField(getTranslation("lbl.refToMessageId"),1);
+		val statuses = createStatuses(1);
+		val from = createDateTimePicker(getTranslation("lbl.from"),1);
+		val to = createDateTimePicker(getTranslation("lbl.to"),1);
+		cpa.addValueChangeListener(cpaSelectChangeListener(cpa,fromParty,toParty));
+		fromParty.addValueChangeListener(partySelectChangeListener(cpa,fromParty,toParty,service));
+		toParty.addValueChangeListener(partySelectChangeListener(cpa,toParty,fromParty,service));
+		service.addValueChangeListener(serviceSelectChangeListener(messageFilter,action));
 		val form = new FormLayout(
-				bind(binder,cpaSelect,"cpaId"),
-				bind(binder,fromPartySelect,"fromParty"),
-				bind(binder,toPartySelect,"toParty"),
-				bind(binder,serviceSelect,"service"),
-				bind(binder,actionSelect,"action"),
-				conversationId,
-				messageId,
-				refToMessageId);
+				bind(binder,cpa,"cpaId"),
+				bind(binder,fromParty,"fromParty"),
+				bind(binder,toParty,"toParty"),
+				bind(binder,service,"service"),
+				bind(binder,action,"action"),
+				// bind(binder,conversationId,"conversationId",builder -> builder.withConverter(new NullableStringConverter())),
+				bind(binder,conversationId,"conversationId",builder -> builder.withNullRepresentation("")),
+				bind(binder,messageId,"messageId",builder -> builder.withNullRepresentation("")),
+				bind(binder,refToMessageId,"refToMessageId",builder -> builder.withNullRepresentation("")),
+				bind(binder,statuses,"statuses"),
+				bind(binder,from,"from"),
+				bind(binder,from,to,"to",t -> t == null || from.getValue() == null || !t.isBefore(from.getValue()),"to must be after from"));
 		form.setSizeFull();
 		add(form);
 	}
 
-	private ComboBox<String> createComboBox(String label, List<String> items)
+	private ComboBox<String> createComboBox(String label, List<String> items, int colspan)
 	{
 		val result = new ComboBox<String>();
+		setColSpan(result,colspan);
 		result.setLabel(label);
 		result.setItems(items);
 		result.setClearButtonVisible(true);
@@ -77,20 +76,39 @@ public class SearchFilter extends HorizontalLayout implements WithBinder, WithEl
 		return result;
 	}
 
-	private TextField createTextField(String label)
+	private TextField createTextField(String label, int colspan)
 	{
 		TextField result = new TextField(label);
-		result.setEnabled(false);
+		setColSpan(result,colspan);
+		result.setClearButtonVisible(true);
 		return result;
 	}
 
-	private ValueChangeListener<? super ComponentValueChangeEvent<ComboBox<String>,String>> cpaSelectChangeListener(EbMSDAO ebMSDAO, ComboBox<String> cpaComboBox, PartySelect fromPartySelect, PartySelect toPartySelect)
+	private MultiSelectListBox<Object> createStatuses(int colspan)
+	{
+		MultiSelectListBox<Object> result = new MultiSelectListBox<>();
+		setColSpan(result,colspan);
+		result.setHeight("11em");
+		result.setItems(EbMSMessageStatus.values());
+		// result.getElement().setAttribute("size","5");
+		return result;
+	}
+
+	private DateTimePicker createDateTimePicker(String label, int colspan)
+	{
+		val result = new DateTimePicker();
+		setColSpan(result,colspan);
+		result.setLabel(label);
+		return result;
+	}
+
+	private ValueChangeListener<? super ComponentValueChangeEvent<ComboBox<String>,String>> cpaSelectChangeListener(ComboBox<String> cpaComboBox, PartySelect fromPartySelect, PartySelect toPartySelect)
 	{
 		return event ->
 		{
 			try
 			{
-				val value = cpaComboBox.getValue() == null ? null : ebMSDAO.findCPA(cpaComboBox.getValue());
+				val value = cpaComboBox.getValue() == null ? null : getEbMSAdminDAO().findCPA(cpaComboBox.getValue());
 				val cpa = value == null ? null : JAXBParser.getInstance(CollaborationProtocolAgreement.class).handleUnsafe(value.getCpa());
 				fromPartySelect.updateState(cpa);
 				toPartySelect.updateState(cpa);
@@ -102,7 +120,7 @@ public class SearchFilter extends HorizontalLayout implements WithBinder, WithEl
 		};
 	}
 
-	private ValueChangeListener<? super ComponentValueChangeEvent<PartySelect,Party>> partySelectChangeListener(EbMSDAO ebMSDAO, ComboBox<String> cpaComboBox, final PartySelect party1, final PartySelect party2, ComboBox<String> serviceSelect)
+	private ValueChangeListener<? super ComponentValueChangeEvent<PartySelect,Party>> partySelectChangeListener(ComboBox<String> cpaComboBox, final PartySelect party1, final PartySelect party2, ComboBox<String> serviceSelect)
 	{
 		return event -> 
 		{
@@ -111,7 +129,7 @@ public class SearchFilter extends HorizontalLayout implements WithBinder, WithEl
 				party2.setEnabled(party1.isEmpty());
 				if (!party1.isEmpty() && party1.getValue().getRole() != null)
 				{
-					val value = cpaComboBox.getValue() == null ? null : ebMSDAO.findCPA(cpaComboBox.getValue());
+					val value = cpaComboBox.getValue() == null ? null : getEbMSAdminDAO().findCPA(cpaComboBox.getValue());
 					val cpa = value == null ? null : JAXBParser.getInstance(CollaborationProtocolAgreement.class).handleUnsafe(value.getCpa());
 					serviceSelect.setItems(CPAUtils.getServiceNames(cpa,party1.getValue().getRole()));
 					serviceSelect.setEnabled(true);
@@ -129,7 +147,7 @@ public class SearchFilter extends HorizontalLayout implements WithBinder, WithEl
 		};
 	}
 
-	private ValueChangeListener<? super ComponentValueChangeEvent<ComboBox<String>,String>> serviceSelectChangeListener(EbMSDAO ebMSDAO, EbMSMessageFilter messageFilter, ComboBox<String> actionSelect)
+	private ValueChangeListener<? super ComponentValueChangeEvent<ComboBox<String>,String>> serviceSelectChangeListener(EbMSMessageFilter messageFilter, ComboBox<String> actionSelect)
 	{
 		return event ->
 		{
@@ -137,7 +155,7 @@ public class SearchFilter extends HorizontalLayout implements WithBinder, WithEl
 			{
 				if (event.getValue() != null)
 				{
-					val value = messageFilter.getCpaId() == null ? null : ebMSDAO.findCPA(messageFilter.getCpaId());
+					val value = messageFilter.getCpaId() == null ? null : getEbMSAdminDAO().findCPA(messageFilter.getCpaId());
 					val cpa = value == null ? null : JAXBParser.getInstance(CollaborationProtocolAgreement.class).handleUnsafe(value.getCpa());
 					val actions = messageFilter.getFromParty() == null 
 						? CPAUtils.getToActionNames(cpa,messageFilter.getToParty().getRole(),event.getValue())

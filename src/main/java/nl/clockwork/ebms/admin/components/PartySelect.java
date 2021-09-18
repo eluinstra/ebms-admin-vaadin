@@ -11,21 +11,24 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import org.oasis_open.committees.ebxml_cppa.schema.cpp_cpa_2_0.CollaborationProtocolAgreement;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.val;
 import nl.clockwork.ebms.admin.CPAUtils;
 import nl.clockwork.ebms.service.model.Party;
 
-public class PartySelect extends AbstractCompositeField<HorizontalLayout,PartySelect,Party>
+public class PartySelect extends AbstractCompositeField<HorizontalLayout,PartySelect,Party> implements WithElement
 {
 	@Getter(value = AccessLevel.PRIVATE)
 	private CollaborationProtocolAgreement cpa;
 	private ComboBox<String> partyIdSelect;
 	private ComboBox<String> roleSelect;
 
-	public PartySelect(String partyIdLabel, String roleLabel)
+	@Builder
+	public PartySelect(String partyIdLabel, String roleLabel, int colspan)
 	{
 		super(null);
+		setColSpan(this,colspan);
 		partyIdSelect = createComboBox(partyIdLabel,Collections.emptyList());
 		roleSelect = createComboBox(roleLabel,Collections.emptyList());
 		partyIdSelect.addValueChangeListener(partyIdSelectChangeListener());
@@ -65,7 +68,7 @@ public class PartySelect extends AbstractCompositeField<HorizontalLayout,PartySe
 		{
 			val partyId = partyIdSelect.getValue();
 			val role = roleSelect.getValue();
-			// if (partyId != null && role != null)
+			if (partyId != null && role != null)
 				setModelValue(new Party(partyId,role),event.isFromClient());
 			// else
 			// 	// clear();

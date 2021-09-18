@@ -15,8 +15,6 @@
  */
 package nl.clockwork.ebms.admin.views.message;
 
-import static nl.clockwork.ebms.admin.views.BeanProvider.getEbMSAdminDAO;
-
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
@@ -46,10 +44,11 @@ import nl.clockwork.ebms.admin.model.DeliveryTask;
 import nl.clockwork.ebms.admin.model.EbMSAttachment;
 import nl.clockwork.ebms.admin.model.EbMSMessage;
 import nl.clockwork.ebms.admin.views.MainLayout;
+import nl.clockwork.ebms.admin.views.WithBean;
 
 @Route(value = "message/:messageId", layout = MainLayout.class)
 @PageTitle("Message")
-public class MessageView extends VerticalLayout implements BeforeEnterObserver, WithElement
+public class MessageView extends VerticalLayout implements BeforeEnterObserver, WithBean, WithElement
 {
 	public MessageView()
 	{

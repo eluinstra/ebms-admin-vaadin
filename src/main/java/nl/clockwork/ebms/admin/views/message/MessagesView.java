@@ -15,8 +15,6 @@
  */
 package nl.clockwork.ebms.admin.views.message;
 
-import static nl.clockwork.ebms.admin.views.BeanProvider.getEbMSAdminDAO;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
@@ -50,29 +48,28 @@ import nl.clockwork.ebms.admin.components.DownloadButton;
 import nl.clockwork.ebms.admin.components.RouterLink;
 import nl.clockwork.ebms.admin.components.WithBinder;
 import nl.clockwork.ebms.admin.components.WithElement;
-import nl.clockwork.ebms.admin.dao.EbMSDAO;
 import nl.clockwork.ebms.admin.model.EbMSMessage;
 import nl.clockwork.ebms.admin.views.MainLayout;
+import nl.clockwork.ebms.admin.views.WithBean;
 
 @Route(value = "message", layout = MainLayout.class)
 @PageTitle("Messages")
-public class MessagesView extends VerticalLayout implements WithElement, WithBinder
+public class MessagesView extends VerticalLayout implements WithBean, WithBinder, WithElement
 {
 
 	public MessagesView() throws JAXBException
 	{
 		setSizeFull();
 		add(new H1(getTranslation("messages")));
-		val ebMSDAO = getEbMSAdminDAO();
 		val messageFilter = EbMSMessageFilter.ebMSMessageFilterBuilder().build();
-		add(new Details(getTranslation("messageFilter"),new SearchFilter(ebMSDAO,messageFilter)));
-		add(createMessageGrid(createMessageDataProvider(ebMSDAO,messageFilter)));
-		add(new DownloadButton(getTranslation("cmd.download"),new StreamResource("messages.csv",() -> createCsv(ebMSDAO))));
+		add(new Details(getTranslation("messageFilter"),new SearchFilter(messageFilter)));
+		add(createMessageGrid(createMessageDataProvider(messageFilter)));
+		add(new DownloadButton(getTranslation("cmd.download"),new StreamResource("messages.csv",this::createCsv)));
 	}
 
-	private DataProvider<EbMSMessage,?> createMessageDataProvider(EbMSDAO ebMSDAO, EbMSMessageFilter messageFilter)
+	private DataProvider<EbMSMessage,?> createMessageDataProvider(EbMSMessageFilter messageFilter)
 	{
-		return DataProvider.fromCallbacks(query -> ebMSDAO.selectMessages(messageFilter,query.getOffset(),query.getLimit()).stream(),query -> ((Long)ebMSDAO.countMessages(messageFilter)).intValue());
+		return DataProvider.fromCallbacks(query -> getEbMSAdminDAO().selectMessages(messageFilter,query.getOffset(),query.getLimit()).stream(),query -> ((Long)getEbMSAdminDAO().countMessages(messageFilter)).intValue());
 	}
 
 	private Component createMessageGrid(DataProvider<EbMSMessage,?> dataProvider)
@@ -104,11 +101,11 @@ public class MessagesView extends VerticalLayout implements WithElement, WithBin
 		return new RouterLink(message.getMessageId(),component,new RouteParameters("messageId",message.getMessageId()));
 	}
 
-	private InputStream createCsv(EbMSDAO ebMSAdminDAO)
+	private InputStream createCsv()
 	{
 		try (val output = new CachedOutputStream(); val printer = new CSVPrinter(new OutputStreamWriter(output),CSVFormat.DEFAULT))
 		{
-			ebMSAdminDAO.printMessagesToCSV(printer,null);
+			getEbMSAdminDAO().printMessagesToCSV(printer,null);
 			return output.getInputStream();
 		}
 		catch (IOException e)

@@ -18,14 +18,13 @@ package nl.clockwork.ebms.admin.views.message;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
 import nl.clockwork.ebms.EbMSMessageStatus;
 import nl.clockwork.ebms.service.model.MessageFilter;
@@ -40,17 +39,17 @@ public class EbMSMessageFilter extends MessageFilter
 	private static final long serialVersionUID = 1L;
 	Integer messageNr;
 	Boolean serviceMessage;
-	List<EbMSMessageStatus> statuses;
+	Set<EbMSMessageStatus> statuses;
 	LocalDateTime from;
 	LocalDateTime to;
 
 	@Builder(builderMethodName = "ebMSMessageFilterBuilder")
-	public EbMSMessageFilter(String cpaId, Party fromParty, Party toParty, String service, String action, Instant timestamp, String conversationId, String messageId, String refToMessageId, EbMSMessageStatus messageStatus, Integer messageNr, Boolean serviceMessage, List<EbMSMessageStatus> statuses, LocalDateTime from, LocalDateTime to)
+	public EbMSMessageFilter(String cpaId, Party fromParty, Party toParty, String service, String action, Instant timestamp, String conversationId, String messageId, String refToMessageId, EbMSMessageStatus messageStatus, Integer messageNr, Boolean serviceMessage, Set<EbMSMessageStatus> statuses, LocalDateTime from, LocalDateTime to)
 	{
 		super(cpaId,fromParty,toParty,service,action,conversationId,messageId,refToMessageId);
 		this.messageNr = messageNr;
 		this.serviceMessage = serviceMessage;
-		this.statuses = statuses == null ? Collections.emptyList() : statuses;
+		this.statuses = statuses == null ? Collections.emptySet() : statuses;
 		this.from = from;
 		this.to = to;
 	}

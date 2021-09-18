@@ -15,8 +15,6 @@
  */
 package nl.clockwork.ebms.admin.views.cpa;
 
-import static nl.clockwork.ebms.admin.views.BeanProvider.getEbMSAdminDAO;
-
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
@@ -30,24 +28,24 @@ import com.vaadin.flow.router.RouteParameters;
 
 import lombok.val;
 import nl.clockwork.ebms.admin.components.RouterLink;
-import nl.clockwork.ebms.admin.dao.EbMSDAO;
 import nl.clockwork.ebms.admin.model.CPA;
 import nl.clockwork.ebms.admin.views.MainLayout;
+import nl.clockwork.ebms.admin.views.WithBean;
 
 @Route(value = "cpa", layout = MainLayout.class)
 @PageTitle("CPAs")
-public class CpasView extends VerticalLayout
+public class CpasView extends VerticalLayout implements WithBean
 {
 	public CpasView()
 	{
 		add(new H1(getTranslation("cpas")));
-		add(createCpaGrid(getEbMSAdminDAO()));
+		add(createCpaGrid());
 	}
 
-	private Component createCpaGrid(EbMSDAO ebMSDAO)
+	private Component createCpaGrid()
 	{
 		val result = new Grid<CPA>(CPA.class,false);
-		result.setDataProvider(createCpaDataProvider(ebMSDAO));
+		result.setDataProvider(createCpaDataProvider());
 		result.setSelectionMode(SelectionMode.NONE);
 		// result.addItemClickListener(cpa -> UI.getCurrent().navigate(CpaView.class, new RouteParameters("cpaId",cpa.getItem().getCpaId())));
 		// result.addColumn("cpaId").setHeader(getTranslation("lbl.cpaId"));
@@ -60,10 +58,10 @@ public class CpasView extends VerticalLayout
 		return new RouterLink(cpa.getCpaId(),component, new RouteParameters("cpaId",cpa.getCpaId()));
 	}
 
-	private DataProvider<CPA,?> createCpaDataProvider(EbMSDAO ebMSDAO)
+	private DataProvider<CPA,?> createCpaDataProvider()
 	{
 		return DataProvider.fromCallbacks(
-			query -> ebMSDAO.selectCPAs(query.getOffset(),query.getLimit()).stream(),
-			query -> ((Long)ebMSDAO.countCPAs()).intValue());
+			query -> getEbMSAdminDAO().selectCPAs(query.getOffset(),query.getLimit()).stream(),
+			query -> ((Long)getEbMSAdminDAO().countCPAs()).intValue());
 	}
 }

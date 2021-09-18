@@ -15,8 +15,6 @@
  */
 package nl.clockwork.ebms.admin.views.cpa;
 
-import static nl.clockwork.ebms.admin.views.BeanProvider.getEbMSAdminDAO;
-
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -34,10 +32,11 @@ import nl.clockwork.ebms.admin.components.BackButton;
 import nl.clockwork.ebms.admin.components.WithElement;
 import nl.clockwork.ebms.admin.model.CPA;
 import nl.clockwork.ebms.admin.views.MainLayout;
+import nl.clockwork.ebms.admin.views.WithBean;
 
 @Route(value = "cpa/:cpaId", layout = MainLayout.class)
 @PageTitle("CPA")
-public class CpaView extends VerticalLayout implements BeforeEnterObserver, WithElement
+public class CpaView extends VerticalLayout implements BeforeEnterObserver, WithBean, WithElement
 {
 	public CpaView()
 	{
