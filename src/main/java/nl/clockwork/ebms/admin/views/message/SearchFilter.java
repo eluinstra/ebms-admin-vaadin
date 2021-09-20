@@ -20,6 +20,7 @@ import lombok.val;
 import lombok.extern.slf4j.Slf4j;
 import nl.clockwork.ebms.EbMSMessageStatus;
 import nl.clockwork.ebms.admin.CPAUtils;
+import nl.clockwork.ebms.admin.components.DateTimeSelect;
 import nl.clockwork.ebms.admin.components.PartySelect;
 import nl.clockwork.ebms.admin.components.WithBinder;
 import nl.clockwork.ebms.admin.components.WithElement;
@@ -42,8 +43,10 @@ public class SearchFilter extends HorizontalLayout implements WithBean, WithBind
 		val messageId = createTextField(getTranslation("lbl.messageId"),1);
 		val refToMessageId = createTextField(getTranslation("lbl.refToMessageId"),1);
 		val statuses = createStatuses(1);
-		val from = createDateTimePicker(getTranslation("lbl.from"),1);
-		val to = createDateTimePicker(getTranslation("lbl.to"),1);
+		// val from = createDateTimePicker(getTranslation("lbl.from"),1);
+		val from = new DateTimeSelect(getTranslation("lbl.fromDate"),getTranslation("lbl.fromTime"),1);
+		// val to = createDateTimePicker(getTranslation("lbl.to"),1);
+		val to = new DateTimeSelect(getTranslation("lbl.toDate"),getTranslation("lbl.toTime"),1);
 		cpa.addValueChangeListener(cpaSelectChangeListener(cpa,fromParty,toParty));
 		fromParty.addValueChangeListener(partySelectChangeListener(cpa,fromParty,toParty,service));
 		toParty.addValueChangeListener(partySelectChangeListener(cpa,toParty,fromParty,service));
@@ -54,7 +57,6 @@ public class SearchFilter extends HorizontalLayout implements WithBean, WithBind
 				bind(binder,toParty,"toParty"),
 				bind(binder,service,"service"),
 				bind(binder,action,"action"),
-				// bind(binder,conversationId,"conversationId",builder -> builder.withConverter(new NullableStringConverter())),
 				bind(binder,conversationId,"conversationId",builder -> builder.withNullRepresentation("")),
 				bind(binder,messageId,"messageId",builder -> builder.withNullRepresentation("")),
 				bind(binder,refToMessageId,"refToMessageId",builder -> builder.withNullRepresentation("")),
@@ -78,15 +80,15 @@ public class SearchFilter extends HorizontalLayout implements WithBean, WithBind
 
 	private TextField createTextField(String label, int colspan)
 	{
-		TextField result = new TextField(label);
+		val result = new TextField(label);
 		setColSpan(result,colspan);
 		result.setClearButtonVisible(true);
 		return result;
 	}
 
-	private MultiSelectListBox<Object> createStatuses(int colspan)
+	private MultiSelectListBox<EbMSMessageStatus> createStatuses(int colspan)
 	{
-		MultiSelectListBox<Object> result = new MultiSelectListBox<>();
+		val result = new MultiSelectListBox<EbMSMessageStatus>();
 		setColSpan(result,colspan);
 		result.setHeight("11em");
 		result.setItems(EbMSMessageStatus.values());

@@ -1,7 +1,5 @@
 package nl.clockwork.ebms.admin.components;
 
-import static java.util.function.Function.identity;
-
 import java.time.LocalDateTime;
 import java.util.function.UnaryOperator;
 
@@ -52,7 +50,7 @@ public interface WithBinder
 		return component;
 	}
 
-	default Component bind(Binder<?> binder, AbstractField<?,LocalDateTime> from, AbstractField<?,LocalDateTime> to, String propertyName, SerializablePredicate<? super LocalDateTime> validator, String errorMessage)
+	default Component bind(Binder<?> binder, AbstractCompositeField<?,?,LocalDateTime> from, AbstractCompositeField<?,?,LocalDateTime> to, String propertyName, SerializablePredicate<? super LocalDateTime> validator, String errorMessage)
 	{
 		val b = binder.forField(to)
 				.withValidator(validator,errorMessage)
