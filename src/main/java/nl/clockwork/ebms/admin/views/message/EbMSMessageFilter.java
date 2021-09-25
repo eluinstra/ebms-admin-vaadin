@@ -24,7 +24,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import nl.clockwork.ebms.EbMSMessageStatus;
 import nl.clockwork.ebms.service.model.MessageFilter;
@@ -32,13 +31,12 @@ import nl.clockwork.ebms.service.model.Party;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class EbMSMessageFilter extends MessageFilter
 {
 	private static final long serialVersionUID = 1L;
-	Integer messageNr;
-	Boolean serviceMessage;
+	final Integer messageNr;
+	final Boolean serviceMessage;
 	Set<EbMSMessageStatus> statuses;
 	LocalDateTime from;
 	LocalDateTime to;
@@ -52,5 +50,20 @@ public class EbMSMessageFilter extends MessageFilter
 		this.statuses = statuses == null ? Collections.emptySet() : statuses;
 		this.from = from;
 		this.to = to;
+	}
+
+	public void reset()
+	{
+		setCpaId(null);
+		setFromParty(null);
+		setToParty(null);
+		setService(null);
+		setAction(null);
+		setConversationId(null);
+		setMessageId(null);
+		setRefToMessageId(null);
+		statuses = Collections.emptySet();
+		from = null;
+		to = null;
 	}
 }

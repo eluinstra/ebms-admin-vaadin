@@ -15,12 +15,11 @@
  */
 package nl.clockwork.ebms.admin.views.message;
 
+import static com.vaadin.flow.component.grid.Grid.SelectionMode.NONE;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 
 import javax.xml.bind.JAXBException;
 
@@ -28,7 +27,6 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.DataProvider;
@@ -46,24 +44,23 @@ import org.apache.cxf.io.CachedOutputStream;
 import lombok.val;
 import nl.clockwork.ebms.admin.components.DownloadButton;
 import nl.clockwork.ebms.admin.components.RouterLink;
-import nl.clockwork.ebms.admin.components.WithBinder;
-import nl.clockwork.ebms.admin.components.WithElement;
+import nl.clockwork.ebms.admin.components.WithDate;
 import nl.clockwork.ebms.admin.model.EbMSMessage;
 import nl.clockwork.ebms.admin.views.MainLayout;
 import nl.clockwork.ebms.admin.views.WithBean;
 
 @Route(value = "message", layout = MainLayout.class)
 @PageTitle("Messages")
-public class MessagesView extends VerticalLayout implements WithBean, WithBinder, WithElement
+public class MessagesView extends VerticalLayout implements WithBean, WithDate
 {
-
 	public MessagesView() throws JAXBException
 	{
 		setSizeFull();
 		add(new H1(getTranslation("messages")));
 		val messageFilter = EbMSMessageFilter.ebMSMessageFilterBuilder().build();
-		add(new Details(getTranslation("messageFilter"),new SearchFilter(messageFilter)));
-		add(createMessageGrid(createMessageDataProvider(messageFilter)));
+		val dataProvider = createMessageDataProvider(messageFilter);
+		add(createSearchFilterDetails(getTranslation("messageFilter"),messageFilter,dataProvider));
+		add(createMessageGrid(dataProvider));
 		add(new DownloadButton(getTranslation("cmd.download"),new StreamResource("messages.csv",this::createCsv)));
 	}
 
@@ -72,16 +69,24 @@ public class MessagesView extends VerticalLayout implements WithBean, WithBinder
 		return DataProvider.fromCallbacks(query -> getEbMSAdminDAO().selectMessages(messageFilter,query.getOffset(),query.getLimit()).stream(),query -> ((Long)getEbMSAdminDAO().countMessages(messageFilter)).intValue());
 	}
 
+	private Details createSearchFilterDetails(String label, EbMSMessageFilter messageFilter, DataProvider<EbMSMessage, ?> dataProvider)
+	{
+		val result = new Details();
+		result.setSummaryText(label);
+		result.setContent(new SearchFilter(messageFilter,dataProvider,() -> result.setOpened(false)));
+		return result;
+	}
+
 	private Component createMessageGrid(DataProvider<EbMSMessage,?> dataProvider)
 	{
 		val result = new Grid<EbMSMessage>(EbMSMessage.class,false);
 		result.setDataProvider(dataProvider);
-		result.setSelectionMode(SelectionMode.NONE);
+		result.setSelectionMode(NONE);
 		result.addColumn(new ComponentRenderer<>(message -> createRouterLink(message,MessageView.class))).setHeader(getTranslation("lbl.messageId")).setAutoWidth(true).setFrozen(true);
 		result.addColumn("messageNr").setHeader(getTranslation("lbl.messageNr")).setAutoWidth(true).setTextAlign(ColumnTextAlign.END);
 		result.addColumn("conversationId").setHeader(getTranslation("lbl.conversationId")).setAutoWidth(true);
 		result.addColumn("refToMessageId").setHeader(getTranslation("lbl.refToMessageId")).setAutoWidth(true);
-		result.addColumn(new LocalDateTimeRenderer<>(m -> LocalDateTime.ofInstant(m.getTimestamp(),ZoneId.systemDefault()),DateTimeFormatter.ISO_DATE_TIME)).setHeader(getTranslation("lbl.timestamp")).setAutoWidth(true);
+		result.addColumn(new LocalDateTimeRenderer<>(m -> toLocalDateTime.apply(m.getTimestamp()),DISPLAY_DATE_TIME_FORMATTER)).setHeader(getTranslation("lbl.timestamp")).setAutoWidth(true);
 		result.addColumn("cpaId").setHeader(getTranslation("lbl.cpaId")).setAutoWidth(true);
 		result.addColumn("fromPartyId").setHeader(getTranslation("lbl.fromPartyId")).setAutoWidth(true);
 		result.addColumn("fromRole").setHeader(getTranslation("lbl.fromRole")).setAutoWidth(true);
@@ -90,7 +95,7 @@ public class MessagesView extends VerticalLayout implements WithBean, WithBinder
 		result.addColumn("service").setHeader(getTranslation("lbl.service")).setAutoWidth(true);
 		result.addColumn("action").setHeader(getTranslation("lbl.action")).setAutoWidth(true);
 		result.addColumn("status").setHeader(getTranslation("lbl.status")).setAutoWidth(true);
-		result.addColumn(new LocalDateTimeRenderer<>(m -> m.getStatusTime() == null ? null : LocalDateTime.ofInstant(m.getStatusTime(),ZoneId.systemDefault()),DateTimeFormatter.ISO_DATE_TIME))
+		result.addColumn(new LocalDateTimeRenderer<>(m -> m.getStatusTime() == null ? null : toLocalDateTime.apply(m.getStatusTime()),DISPLAY_DATE_TIME_FORMATTER))
 				.setHeader(getTranslation("lbl.statusTime"))
 				.setAutoWidth(true);
 		return result;
