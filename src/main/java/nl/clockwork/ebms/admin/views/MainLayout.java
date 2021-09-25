@@ -31,6 +31,7 @@ import lombok.val;
 import nl.clockwork.ebms.admin.components.RouterLink;
 import nl.clockwork.ebms.admin.views.cpa.CpasView;
 import nl.clockwork.ebms.admin.views.message.MessagesView;
+import nl.clockwork.ebms.admin.views.message.TrafficView;
 
 @PWA(name = "ebms-admin-vaadin", shortName = "ebms-admin-vaadin", enableInstallPrompt = false, iconPath = "icons/icon.png")
 @Theme(value = Material.class)
@@ -91,7 +92,7 @@ public class MainLayout extends AppLayout
 	private void createAdvancedMenu(MenuItem advanced)
 	{
 		val subMenu = advanced.getSubMenu();
-		subMenu.addItem(getTranslation("traffic"));
+		subMenu.addItem(new RouterLink(getTranslation("traffic"),TrafficView.class));
 		subMenu.addItem(getTranslation("trafficChart"));
 		subMenu.add(new Hr());
 		subMenu.addItem(new RouterLink(getTranslation("cpas"),CpasView.class));

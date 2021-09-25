@@ -77,7 +77,7 @@ public class MessageView extends VerticalLayout implements BeforeEnterObserver, 
 		result.add(createField(getTranslation("lbl.messageNr"),String.valueOf(message.getMessageNr())));
 		result.add(createField(getTranslation("lbl.conversationId"),message.getConversationId()));
 		result.add(createField(getTranslation("lbl.refToMessageId"),message.getRefToMessageId()));
-		result.add(createField(getTranslation("lbl.timestamp"),toString(message.getTimestamp())));
+		result.add(createField(getTranslation("lbl.timestamp"),message.getTimestamp()));
 		result.add(createField(getTranslation("lbl.cpaId"),message.getCpaId()));
 		result.add(createField(getTranslation("lbl.fromPartyId"),message.getFromPartyId()));
 		result.add(createField(getTranslation("lbl.fromRole"),message.getFromRole()));
@@ -87,12 +87,17 @@ public class MessageView extends VerticalLayout implements BeforeEnterObserver, 
 		result.add(createField(getTranslation("lbl.action"),message.getAction()));
 		//viewMessageError
 		result.add(createField(getTranslation("lbl.status"),message.getStatus().name()));
-		result.add(createField(getTranslation("lbl.statusTime"),toString(message.getStatusTime())));
+		result.add(createField(getTranslation("lbl.statusTime"),message.getStatusTime()));
 		if (message.getDeliveryTask() != null)
 			result.add(createDeliveryTask(message.getDeliveryTask()));
 		result.add(createDeliveryLogs(message.getDeliveryLogs()));
 		result.add(createAttachments(message.getAttachments()));
 		return result;
+	}
+
+	private Component createField(final String label, final Instant value)
+	{
+		return createField(label,value == null ? null : value.toString());
 	}
 
 	private Component createField(final String label, final String value)
@@ -109,11 +114,6 @@ public class MessageView extends VerticalLayout implements BeforeEnterObserver, 
 		val result = new Label(label);
 		result.getElement().getStyle().set("font-weight","bold");
 		return result;
-	}
-
-	private String toString(Instant dateTime)
-	{
-		return dateTime == null ? null : dateTime.toString();
 	}
 
 	private Component createDeliveryTask(@NonNull DeliveryTask deliveryTask)
