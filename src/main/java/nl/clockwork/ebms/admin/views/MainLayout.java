@@ -23,9 +23,6 @@ import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.server.PWA;
-import com.vaadin.flow.theme.Theme;
-import com.vaadin.flow.theme.material.Material;
 
 import lombok.val;
 import nl.clockwork.ebms.admin.components.RouterLink;
@@ -34,8 +31,6 @@ import nl.clockwork.ebms.admin.views.message.MessagesView;
 import nl.clockwork.ebms.admin.views.message.TrafficChartView;
 import nl.clockwork.ebms.admin.views.message.TrafficView;
 
-@PWA(name = "ebms-admin-vaadin", shortName = "ebms-admin-vaadin", enableInstallPrompt = false, iconPath = "icons/icon.png")
-@Theme(value = Material.class)
 @CssImport("./styles/custom-styles.css")
 @PageTitle("Main")
 public class MainLayout extends AppLayout

@@ -31,7 +31,7 @@
 	<description></description>
 	<properties>
 		<java.version>1.8</java.version>
-		<vaadin.version>14.8.2</vaadin.version>
+		<vaadin.version>22.0.3</vaadin.version>
 		<cxf.version>3.5.0</cxf.version>
 		<querydsl.version>5.0.0</querydsl.version>
 	</properties>
