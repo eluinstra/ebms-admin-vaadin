@@ -53,7 +53,6 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
@@ -69,7 +68,7 @@ import nl.clockwork.ebms.admin.views.WithBean;
 public class TrafficChartView extends VerticalLayout implements WithBean, WithBinder, WithElement
 {
 	private final TrafficChartConfig config = TrafficChartConfig.of(TimeUnit.DAY,EbMSMessageTrafficChartOption.ALL);
-	private Component chart = updateApexCharts(createDefaultApexCharts(),config); //new Div();
+	private Component chart = updateApexCharts(createDefaultApexCharts(),config);
 
 	public TrafficChartView()
 	{
@@ -77,12 +76,12 @@ public class TrafficChartView extends VerticalLayout implements WithBean, WithBi
 		add(new H1(getTranslation("trafficChart")));
 		val binder = createBinder(TrafficChartConfig.class,config);
 		add(
-				createDateBar(binder,config),
+				createDateBar(config),
 				chart,
-				createChartBar(binder,config));
+				createChartBar(config));
 	}
 
-	private Component createDateBar(Binder<TrafficChartConfig> binder, TrafficChartConfig config)
+	private Component createDateBar(TrafficChartConfig config)
 	{
 		val result = new HorizontalLayout();
 		result.setWidthFull();
@@ -227,7 +226,7 @@ public class TrafficChartView extends VerticalLayout implements WithBean, WithBi
 		return dates;
 	}
 
-	private Component createChartBar(Binder<TrafficChartConfig> binder, TrafficChartConfig config)
+	private Component createChartBar(TrafficChartConfig config)
 	{
 		val result = new HorizontalLayout();
 		result.setWidthFull();

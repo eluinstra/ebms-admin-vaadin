@@ -64,7 +64,7 @@ public class MessagesView extends VerticalLayout implements WithBean, WithDate
 		add(new DownloadButton(getTranslation("cmd.download"),new StreamResource("messages.csv",this::createCsv)));
 	}
 
-	private DataProvider<EbMSMessage,?> createMessageDataProvider(EbMSMessageFilter messageFilter)
+	private DataProvider<EbMSMessage,Void> createMessageDataProvider(EbMSMessageFilter messageFilter)
 	{
 		return DataProvider.fromCallbacks(query -> getEbMSAdminDAO().selectMessages(messageFilter,query.getOffset(),query.getLimit()).stream(),query -> ((Long)getEbMSAdminDAO().countMessages(messageFilter)).intValue());
 	}
@@ -77,10 +77,10 @@ public class MessagesView extends VerticalLayout implements WithBean, WithDate
 		return result;
 	}
 
-	private Component createMessageGrid(DataProvider<EbMSMessage,?> dataProvider)
+	private Component createMessageGrid(DataProvider<EbMSMessage,Void> dataProvider)
 	{
 		val result = new Grid<EbMSMessage>(EbMSMessage.class,false);
-		result.setDataProvider(dataProvider);
+		result.setItems(dataProvider);
 		result.setSelectionMode(NONE);
 		result.addColumn(new ComponentRenderer<>(message -> createRouterLink(message,MessageView.class))).setHeader(getTranslation("lbl.messageId")).setAutoWidth(true).setFrozen(true);
 		result.addColumn("messageNr").setHeader(getTranslation("lbl.messageNr")).setAutoWidth(true).setTextAlign(ColumnTextAlign.END);

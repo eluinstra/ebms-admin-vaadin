@@ -15,11 +15,15 @@
  */
 package nl.clockwork.ebms.admin;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Constants
 {
-	public final static String DATE_FORMAT = "dd-MM-yyyy";
-	public final static String DATE_MONTH_FORMAT = "MM-yyyy";
-	public final static String DATE_YEAR_FORMAT = "yyyy";
-	public final static String DATETIME_FORMAT = "dd-MM-yyyy HH:mm:ss";
-	public final static String DATETIME_HOUR_FORMAT = "dd-MM-yyyy HH:mm";
+	public static final String DATE_FORMAT = "dd-MM-yyyy";
+	public static final String DATE_MONTH_FORMAT = "MM-yyyy";
+	public static final String DATE_YEAR_FORMAT = "yyyy";
+	public static final String DATETIME_FORMAT = "dd-MM-yyyy HH:mm:ss";
+	public static final String DATETIME_HOUR_FORMAT = "dd-MM-yyyy HH:mm";
 }

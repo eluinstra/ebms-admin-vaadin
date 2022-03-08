@@ -47,7 +47,7 @@ public class Utils
 		String rowClass;
 		String cellClass;
 
-		public static Function2<EbMSMessageStatus,Function<Status,String>,String> getCssClass = (status,getClass) ->
+		public static final Function2<EbMSMessageStatus,Function<Status,String>,String> getCssClass = (status,getClass) ->
 				Arrays.stream(Status.values())
 					.filter(s -> s.statuses.contains(status))
 					.map(s -> getClass.apply(s))
@@ -65,7 +65,9 @@ public class Utils
 
 	public static String getFileExtension(String contentType)
 	{
-		return StringUtils.isNotEmpty(contentType) ? "." + (contentType.contains("text") ? "txt" : contentType.split("/")[1]) : "";
+		return StringUtils.isNotEmpty(contentType) 
+				? "." + (contentType.contains("text") ? "txt" : contentType.split("/")[1])
+				: "";
 	}
 
 	public static String getTableCellCssClass(EbMSMessageStatus ebMSMessageStatus)

@@ -127,7 +127,7 @@ public class MessageView extends VerticalLayout implements BeforeEnterObserver, 
 	private Component createDeliveryTaskTable(@NonNull List<DeliveryTask> deliveryTasks)
 	{
 		val result = new Grid<DeliveryTask>(DeliveryTask.class,false);
-		result.setHeightByRows(true);
+		result.setAllRowsVisible(true);
 		result.setItems(deliveryTasks);
 		result.addColumn("timeToLive").setHeader(getTranslation("lbl.timeToLive"));
 		result.addColumn("timestamp").setHeader(getTranslation("lbl.timestamp"));
@@ -147,7 +147,7 @@ public class MessageView extends VerticalLayout implements BeforeEnterObserver, 
 	private Component createDeliveryLogTable(@NonNull List<DeliveryLog> deliveryLogs)
 	{
 		val result = new Grid<DeliveryLog>(DeliveryLog.class,false);
-		result.setHeightByRows(true);
+		result.setAllRowsVisible(true);
 		result.setItems(deliveryLogs);
 		result.addColumn("timestamp").setHeader(getTranslation("lbl.timestamp"));
 		result.addColumn("uri").setHeader(getTranslation("lbl.uri"));
@@ -168,7 +168,7 @@ public class MessageView extends VerticalLayout implements BeforeEnterObserver, 
 	private Component createAttachmentsTable(@NonNull List<EbMSAttachment> attachments)
 	{
 		val result = new Grid<EbMSAttachment>(EbMSAttachment.class,false);
-		result.setHeightByRows(true);
+		result.setAllRowsVisible(true);
 		result.setItems(attachments);
 		result.addColumn("name").setHeader(getTranslation("lbl.name"));
 		result.addColumn("contentId").setHeader(getTranslation("lbl.contentId"));

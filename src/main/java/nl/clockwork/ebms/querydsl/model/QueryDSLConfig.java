@@ -15,23 +15,12 @@
  */
 package nl.clockwork.ebms.querydsl.model;
 
-import static io.vavr.API.$;
-import static io.vavr.API.Case;
-import static io.vavr.API.Match;
-import static nl.clockwork.ebms.Predicates.contains;
-
 import java.sql.Types;
 
 import javax.sql.DataSource;
 
-import com.querydsl.sql.DB2Templates;
-import com.querydsl.sql.H2Templates;
 import com.querydsl.sql.HSQLDBTemplates;
-import com.querydsl.sql.MySQLTemplates;
-import com.querydsl.sql.OracleTemplates;
-import com.querydsl.sql.PostgreSQLTemplates;
 import com.querydsl.sql.SQLQueryFactory;
-import com.querydsl.sql.SQLServer2012Templates;
 import com.querydsl.sql.SQLTemplates;
 import com.querydsl.sql.spring.SpringConnectionProvider;
 import com.querydsl.sql.spring.SpringExceptionTranslator;
@@ -43,7 +32,6 @@ import org.springframework.context.annotation.Configuration;
 import lombok.AccessLevel;
 import lombok.val;
 import lombok.experimental.FieldDefaults;
-import nl.clockwork.ebms.dao.AbstractDAOFactory;
 import nl.clockwork.ebms.querydsl.CachedOutputStreamType;
 import nl.clockwork.ebms.querydsl.CollaborationProtocolAgreementType;
 import nl.clockwork.ebms.querydsl.DeliveryTaskStatusType;
@@ -56,20 +44,17 @@ import nl.clockwork.ebms.querydsl.X509CertificateType;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class QueryDSLConfig
 {
-	@Autowired
-	DataSource dataSource;
-	
 	@Bean
-	public SQLQueryFactory queryFactory()
+	public SQLQueryFactory queryFactory(DataSource dataSource, com.querydsl.sql.Configuration configuration)
 	{
 		val provider = new SpringConnectionProvider(dataSource);
-		return new SQLQueryFactory(querydslConfiguration(),provider);
+		return new SQLQueryFactory(configuration,provider);
 	}
 
 	@Bean
-	public com.querydsl.sql.Configuration querydslConfiguration()
+	public com.querydsl.sql.Configuration querydslConfiguration(SQLTemplates templates)
 	{
-		val templates = sqlTemplates();
+		// val templates = sqlTemplates(dataSource);
 		val result = new com.querydsl.sql.Configuration(templates);
 		result.setExceptionTranslator(new SpringExceptionTranslator());
 		result.register("cpa","cpa",new CollaborationProtocolAgreementType(Types.CLOB));
@@ -84,24 +69,25 @@ public class QueryDSLConfig
 	}
 
 	@Bean
-	public SQLTemplates sqlTemplates()
+	public SQLTemplates sqlTemplates(DataSource dataSource)
 	{
 		return createSQLTemplates(dataSource);
 	}
 
 	private SQLTemplates createSQLTemplates(DataSource dataSource)
 	{
-		val driverClassName = AbstractDAOFactory.getDriverClassName(dataSource) == null ? "db2" : AbstractDAOFactory.getDriverClassName(dataSource);
-		return Match(driverClassName).of(
-				Case($(contains("db2")),o -> DB2Templates.builder().build()),
-				Case($(contains("h2")),o -> H2Templates.builder().build()),
-				Case($(contains("hsqldb")),o -> HSQLDBTemplates.builder().build()),
-				Case($(contains("mariadb","mysql")),o -> MySQLTemplates.builder().build()),
-				Case($(contains("oracle")),o -> OracleTemplates.builder().build()),
-				Case($(contains("postgresql")),o -> PostgreSQLTemplates.builder().build()),
-				Case($(contains("sqlserver")),o -> SQLServer2012Templates.builder().build()),
-				Case($(),o -> {
-					throw new RuntimeException("Driver class name " + driverClassName + " not recognized!");
-				}));
+		// val driverClassName = AbstractDAOFactory.getDriverClassName(dataSource) == null ? "db2" : AbstractDAOFactory.getDriverClassName(dataSource);
+		// return Match(driverClassName).of(
+		// 		Case($(contains("db2")),o -> DB2Templates.builder().build()),
+		// 		Case($(contains("h2")),o -> H2Templates.builder().build()),
+		// 		Case($(contains("hsqldb")),o -> HSQLDBTemplates.builder().build()),
+		// 		Case($(contains("mariadb","mysql")),o -> MySQLTemplates.builder().build()),
+		// 		Case($(contains("oracle")),o -> OracleTemplates.builder().build()),
+		// 		Case($(contains("postgresql")),o -> PostgreSQLTemplates.builder().build()),
+		// 		Case($(contains("sqlserver")),o -> SQLServer2012Templates.builder().build()),
+		// 		Case($(),o -> {
+		// 			throw new RuntimeException("Driver class name " + driverClassName + " not recognized!");
+		// 		}));
+		return HSQLDBTemplates.builder().build();
 	}
 }

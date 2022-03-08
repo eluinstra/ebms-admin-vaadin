@@ -25,16 +25,13 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 
 import org.oasis_open.committees.ebxml_cppa.schema.cpp_cpa_2_0.CollaborationProtocolAgreement;
 
-import lombok.AccessLevel;
 import lombok.Builder;
-import lombok.Getter;
 import lombok.val;
 import nl.clockwork.ebms.admin.CPAUtils;
 import nl.clockwork.ebms.service.model.Party;
 
 public class PartySelect extends AbstractCompositeField<HorizontalLayout,PartySelect,Party> implements WithElement
 {
-	@Getter(value = AccessLevel.PRIVATE)
 	private CollaborationProtocolAgreement cpa;
 	private ComboBox<String> partyIdSelect;
 	private ComboBox<String> roleSelect;
@@ -71,8 +68,8 @@ public class PartySelect extends AbstractCompositeField<HorizontalLayout,PartySe
 				setModelValue(new Party(partyId,null),event.isFromClient());
 			else
 				clear();
-			val isEnabled = getCpa() != null && partyIdSelect.getValue() != null;
-			roleSelect.setItems(isEnabled ? CPAUtils.getRoleNames(getCpa(),partyIdSelect.getValue()) : Collections.emptyList());
+			val isEnabled = cpa != null && partyIdSelect.getValue() != null;
+			roleSelect.setItems(isEnabled ? CPAUtils.getRoleNames(cpa,partyIdSelect.getValue()) : Collections.emptyList());
 			roleSelect.setEnabled(isEnabled);
 		};
 	}

@@ -25,8 +25,11 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TreeSet;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.val;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Utils
 {
 	public static String readVersion(String propertiesFile)

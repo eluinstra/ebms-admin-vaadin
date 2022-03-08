@@ -56,7 +56,7 @@ public class TrafficView extends VerticalLayout implements WithBean, WithDate
 		add(createMessageGrid(dataProvider));
 	}
 
-	private DataProvider<EbMSMessage,?> createMessageDataProvider(EbMSMessageFilter messageFilter)
+	private DataProvider<EbMSMessage,Void> createMessageDataProvider(EbMSMessageFilter messageFilter)
 	{
 		return DataProvider.fromCallbacks(query -> getEbMSAdminDAO().selectMessages(messageFilter,query.getOffset(),query.getLimit()).stream(),query -> ((Long)getEbMSAdminDAO().countMessages(messageFilter)).intValue());
 	}
@@ -69,10 +69,10 @@ public class TrafficView extends VerticalLayout implements WithBean, WithDate
 		return result;
 	}
 
-	private Component createMessageGrid(DataProvider<EbMSMessage,?> dataProvider)
+	private Component createMessageGrid(DataProvider<EbMSMessage,Void> dataProvider)
 	{
 		val result = new Grid<EbMSMessage>(EbMSMessage.class,false);
-		result.setDataProvider(dataProvider);
+		result.setItems(dataProvider);
 		result.setSelectionMode(NONE);
 		result.addColumn(new ComponentRenderer<>(message -> createRouterLink(message,MessageView.class))).setHeader(getTranslation("lbl.messageId")).setAutoWidth(true).setFrozen(true);
 		result.addColumn("conversationId").setHeader(getTranslation("lbl.conversationId")).setAutoWidth(true);

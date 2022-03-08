@@ -16,6 +16,7 @@
 package nl.clockwork.ebms.admin.views.cpa;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.html.H1;
@@ -45,9 +46,9 @@ public class CpasView extends VerticalLayout implements WithBean
 	private Component createCpaGrid()
 	{
 		val result = new Grid<CPA>(CPA.class,false);
-		result.setDataProvider(createCpaDataProvider());
+		result.setItems(createCpaDataProvider());
 		result.setSelectionMode(SelectionMode.NONE);
-		// result.addItemClickListener(cpa -> UI.getCurrent().navigate(CpaView.class, new RouteParameters("cpaId",cpa.getItem().getCpaId())));
+		result.addItemClickListener(cpa -> UI.getCurrent().navigate(CpaView.class, new RouteParameters("cpaId",cpa.getItem().getCpaId())));
 		// result.addColumn("cpaId").setHeader(getTranslation("lbl.cpaId"));
 		result.addColumn(new ComponentRenderer<>(cpa -> createRouterLink(cpa,CpaView.class))).setHeader(getTranslation("lbl.cpaId"));
 		return result;
@@ -58,7 +59,7 @@ public class CpasView extends VerticalLayout implements WithBean
 		return new RouterLink(cpa.getCpaId(),component, new RouteParameters("cpaId",cpa.getCpaId()));
 	}
 
-	private DataProvider<CPA,?> createCpaDataProvider()
+	private DataProvider<CPA,Void> createCpaDataProvider()
 	{
 		return DataProvider.fromCallbacks(
 			query -> getEbMSAdminDAO().selectCPAs(query.getOffset(),query.getLimit()).stream(),

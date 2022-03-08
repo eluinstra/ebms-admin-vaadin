@@ -37,7 +37,6 @@ public class AboutView extends VerticalLayout
 		val accordion = new Accordion();
 		accordion.setSizeFull();
 		accordion.add(createVersionsCard());
-		accordion.add(createPropertiesCard());
 		accordion.add(createLicenseInfo());
 		add(accordion);
 	}
@@ -45,17 +44,9 @@ public class AboutView extends VerticalLayout
 	private AccordionPanel createVersionsCard()
 	{
 		val properties = new VerticalLayout();
-		properties.add(new Span(Utils.readVersion("/META-INF/maven/nl.clockwork.ebms.admin/ebms-admin/pom.properties")));
-		properties.add(new Span(Utils.readVersion("/META-INF/maven/nl.clockwork.ebms/ebms-core/pom.properties")));
+		properties.add(new Span(getTranslation("ebms-admin.version", Utils.readVersion("/META-INF/maven/nl.clockwork.ebms.admin/ebms-admin/pom.properties"))));
+		properties.add(new Span(getTranslation("ebms-admin.version", Utils.readVersion("/META-INF/maven/nl.clockwork.ebms/ebms-core/pom.properties"))));
 		return new AccordionPanel(getTranslation("versions"),properties);
-	}
-
-	private AccordionPanel createPropertiesCard()
-	{
-		return new AccordionPanel(
-			getTranslation("properties"),
-			new Pre("prop1=val1\nprop2=val2\nprop3=val3")
-		);
 	}
 
 	private AccordionPanel createLicenseInfo()

@@ -69,6 +69,7 @@ public class MySQLEbMSDAO extends AbstractEbMSDAO
 		);
 	}
 
+	@Override
 	protected List<EbMSAttachment> getAttachments(String messageId, int messageNr)
 	{
 		return jdbcTemplate.query(

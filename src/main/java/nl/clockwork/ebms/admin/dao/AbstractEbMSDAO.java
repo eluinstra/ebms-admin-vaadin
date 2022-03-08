@@ -353,11 +353,11 @@ public abstract class AbstractEbMSDAO implements EbMSDAO
 		{
 			if (messageFilter.getMessageNr() != null)
 				builder.and(table.messageNr.eq(messageFilter.getMessageNr()));
-			if (messageFilter.getStatuses().size() > 0)
+			if (!messageFilter.getStatuses().isEmpty())
 				builder.and(table.status.in(messageFilter.getStatuses()));
 			if (messageFilter.getServiceMessage() != null)
 			{
-				if (messageFilter.getServiceMessage())
+				if (Boolean.TRUE.equals(messageFilter.getServiceMessage()))
 					builder.and(table.service.eq(EbMSAction.EBMS_SERVICE_URI));
 				else
 					builder.and(table.service.ne(EbMSAction.EBMS_SERVICE_URI));
