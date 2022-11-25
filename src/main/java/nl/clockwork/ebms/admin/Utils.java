@@ -61,12 +61,20 @@ public class Utils
 	{
 		val keySet = new TreeSet<String>(properties.keySet());
 		for (val key : keySet)
-		{
-			writer.write(key);
-			writer.write(" = ");
-			writer.write(key.matches(".*(password|pwd).*") ? properties.get(key).replaceAll(".","*") : properties.get(key));
-			writer.write("\n");
-		}
+			writeProperty(writer,key,hidePassword(key,properties.get(key)));
+	}
+
+	private static void writeProperty(Writer writer, String key, String value) throws IOException
+	{
+		writer.write(key);
+		writer.write(" = ");
+		writer.write(value);
+		writer.write("\n");
+	}
+
+	private static String hidePassword(String key, String property)
+	{
+		return key.matches("(?i).*(password|pwd).*") ? property.replaceAll(".","*") : property;
 	}
 
 	public static <T> List<T> toList(List<T> list)

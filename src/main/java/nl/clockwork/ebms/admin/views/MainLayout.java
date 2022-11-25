@@ -52,11 +52,11 @@ public class MainLayout extends AppLayout
 	{
 		val menuBar = new MenuBar();
 		menuBar.setOpenOnHover(true);
-		menuBar.addItem(new RouterLink(getTranslation("home"),HomeView.class));
+		menuBar.addItem(getTranslation("home"),e -> UI.getCurrent().navigate(HomeView.class));
 		createCPAServiceMenu(menuBar.addItem(getTranslation("cpaService")));
 		createMessageServiceMenu(menuBar.addItem(getTranslation("messageService")));
 		createAdvancedMenu(menuBar.addItem(getTranslation("advanced")));
-		menuBar.addItem(new RouterLink(getTranslation("about"),AboutView.class));
+		menuBar.addItem(getTranslation("about"),e -> UI.getCurrent().navigate(AboutView.class));
 		return menuBar;
 	}
 
@@ -88,10 +88,10 @@ public class MainLayout extends AppLayout
 	private void createAdvancedMenu(MenuItem advanced)
 	{
 		val subMenu = advanced.getSubMenu();
-		subMenu.addItem(new RouterLink(getTranslation("traffic"),TrafficView.class));
-		subMenu.addItem(new RouterLink(getTranslation("trafficChart"),TrafficChartView.class));
+		subMenu.addItem(getTranslation("traffic"),e -> UI.getCurrent().navigate(TrafficView.class));
+		subMenu.addItem(getTranslation("trafficChart"),e -> UI.getCurrent().navigate(TrafficChartView.class));
 		subMenu.add(new Hr());
-		subMenu.addItem(new RouterLink(getTranslation("cpas"),CpasView.class));
-		subMenu.addItem(new RouterLink(getTranslation("messages"),MessagesView.class));
+		subMenu.addItem(getTranslation("cpas"),e -> UI.getCurrent().navigate(CpasView.class));
+		subMenu.addItem(getTranslation("messages"),e -> UI.getCurrent().navigate(MessagesView.class));
 	}
 }
