@@ -48,7 +48,6 @@ public class TrafficView extends VerticalLayout implements WithBean, WithDate
 		setSizeFull();
 		add(new H1(getTranslation("traffic")));
 		val messageFilter = EbMSMessageFilter.ebMSMessageFilterBuilder()
-				.messageNr(0)
 				.serviceMessage(false)
 				.build();
 		val dataProvider = createMessageDataProvider(messageFilter);

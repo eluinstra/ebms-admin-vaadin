@@ -83,7 +83,6 @@ public class MessagesView extends VerticalLayout implements WithBean, WithDate
 		result.setItems(dataProvider);
 		result.setSelectionMode(NONE);
 		result.addColumn(new ComponentRenderer<>(message -> createRouterLink(message,MessageView.class))).setHeader(getTranslation("lbl.messageId")).setAutoWidth(true).setFrozen(true);
-		result.addColumn("messageNr").setHeader(getTranslation("lbl.messageNr")).setAutoWidth(true).setTextAlign(ColumnTextAlign.END);
 		result.addColumn("conversationId").setHeader(getTranslation("lbl.conversationId")).setAutoWidth(true);
 		result.addColumn("refToMessageId").setHeader(getTranslation("lbl.refToMessageId")).setAutoWidth(true);
 		result.addColumn(new LocalDateTimeRenderer<>(m -> toLocalDateTime.apply(m.getTimestamp()),DISPLAY_DATE_TIME_FORMATTER)).setHeader(getTranslation("lbl.timestamp")).setAutoWidth(true);

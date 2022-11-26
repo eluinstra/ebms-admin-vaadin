@@ -44,7 +44,6 @@ public class EbMSMessage
 	String conversationId;
 	@NonNull
 	String messageId;
-	int messageNr;
 	String refToMessageId;
 	Instant timeToLive;
 	@NonNull
@@ -66,13 +65,12 @@ public class EbMSMessage
 	@NonNull
 	List<DeliveryLog> deliveryLogs = Collections.emptyList();
 
-	public EbMSMessage(@NonNull Instant timestamp, @NonNull String cpaId, @NonNull String conversationId, @NonNull String messageId, int messageNr, String refToMessageId, Instant timeToLive, @NonNull String fromPartyId, String fromRole, @NonNull String toPartyId, String toRole, @NonNull String service, @NonNull String action, EbMSMessageStatus status, Instant statusTime)
+	public EbMSMessage(@NonNull Instant timestamp, @NonNull String cpaId, @NonNull String conversationId, @NonNull String messageId, String refToMessageId, Instant timeToLive, @NonNull String fromPartyId, String fromRole, @NonNull String toPartyId, String toRole, @NonNull String service, @NonNull String action, EbMSMessageStatus status, Instant statusTime)
 	{
 		this.timestamp = timestamp;
 		this.cpaId = cpaId;
 		this.conversationId = conversationId;
 		this.messageId = messageId;
-		this.messageNr = messageNr;
 		this.refToMessageId = refToMessageId;
 		this.timeToLive = timeToLive;
 		this.fromPartyId = fromPartyId;
@@ -87,13 +85,12 @@ public class EbMSMessage
 		this.deliveryLogs = Collections.emptyList();
 	}
 
-	public EbMSMessage(@NonNull Instant timestamp, @NonNull String cpaId, @NonNull String conversationId, @NonNull String messageId, int messageNr, String refToMessageId, Instant timeToLive, @NonNull String fromPartyId, String fromRole, @NonNull String toPartyId, String toRole, @NonNull String service, @NonNull String action, Document content, EbMSMessageStatus status, Instant statusTime) throws TransformerException
+	public EbMSMessage(@NonNull Instant timestamp, @NonNull String cpaId, @NonNull String conversationId, @NonNull String messageId, String refToMessageId, Instant timeToLive, @NonNull String fromPartyId, String fromRole, @NonNull String toPartyId, String toRole, @NonNull String service, @NonNull String action, Document content, EbMSMessageStatus status, Instant statusTime) throws TransformerException
 	{
 		this.timestamp = timestamp;
 		this.cpaId = cpaId;
 		this.conversationId = conversationId;
 		this.messageId = messageId;
-		this.messageNr = messageNr;
 		this.refToMessageId = refToMessageId;
 		this.timeToLive = timeToLive;
 		this.fromPartyId = fromPartyId;

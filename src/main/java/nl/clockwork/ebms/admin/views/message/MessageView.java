@@ -74,7 +74,6 @@ public class MessageView extends VerticalLayout implements BeforeEnterObserver, 
 		val result = new FormLayout();
 		result.setSizeFull();
 		result.add(createField(getTranslation("lbl.messageId"),message.getMessageId()));
-		result.add(createField(getTranslation("lbl.messageNr"),String.valueOf(message.getMessageNr())));
 		result.add(createField(getTranslation("lbl.conversationId"),message.getConversationId()));
 		result.add(createField(getTranslation("lbl.refToMessageId"),message.getRefToMessageId()));
 		result.add(createField(getTranslation("lbl.timestamp"),message.getTimestamp()));

@@ -19,16 +19,18 @@ import java.sql.Types;
 
 import javax.sql.DataSource;
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import com.atomikos.jdbc.AtomikosDataSourceBean;
 import com.querydsl.sql.HSQLDBTemplates;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.SQLTemplates;
 import com.querydsl.sql.spring.SpringConnectionProvider;
 import com.querydsl.sql.spring.SpringExceptionTranslator;
+import com.zaxxer.hikari.HikariDataSource;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
+import bitronix.tm.resource.jdbc.PoolingDataSource;
 import lombok.AccessLevel;
 import lombok.val;
 import lombok.experimental.FieldDefaults;
@@ -90,4 +92,14 @@ public class QueryDSLConfig
 		// 		}));
 		return HSQLDBTemplates.builder().build();
 	}
+
+	public static String getDriverClassName(DataSource dataSource)
+	{
+		return dataSource instanceof HikariDataSource 
+			? ((HikariDataSource)dataSource).getDriverClassName()
+			: dataSource  instanceof PoolingDataSource 
+				? ((PoolingDataSource)dataSource).getClassName()
+				: ((AtomikosDataSourceBean)dataSource).getXaDataSourceClassName();
+	}
+
 }
